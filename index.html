@@ -584,6 +584,185 @@ const SPEAK_SENTS=[
 ["何時に会議が始まりますか。","Nanji ni kaigi ga hajimarimasu ka.","What time does the meeting start?"],
 ["手伝いましょうか。","Tetsudaimashō ka.","Shall I help you?"]];
 
+// ---- N4 kanji wave ----
+const KANJI4_RAW=`悪|アク|わる(い)|bad
+安心|—|—|SKIP
+暗|アン|くら(い)|dark
+医|イ|—|medicine; doctor
+意|イ|—|mind; meaning
+以|イ|—|by means of; since
+引|イン|ひ(く)|to pull
+員|イン|—|member
+院|イン|—|institution
+運|ウン|はこ(ぶ)|carry; luck
+英|エイ|—|England; excellent
+映|エイ|うつ(る)|reflect; movie
+遠|エン|とお(い)|far
+屋|オク|や|shop; roof
+音|オン|おと|sound
+歌|カ|うた|song
+家|カ・ケ|いえ|house; family
+画|ガ・カク|—|picture; stroke
+海|カイ|うみ|sea
+界|カイ|—|world; boundary
+開|カイ|あ(く)・ひら(く)|to open
+楽|ガク・ラク|たの(しい)|music; fun
+館|カン|—|building; hall
+漢|カン|—|China (kanji)
+寒|カン|さむ(い)|cold
+考|コウ|かんが(える)|to think
+光|コウ|ひかり|light
+工|コウ|—|craft; industry
+広|コウ|ひろ(い)|wide
+黒|コク|くろ(い)|black
+作|サク|つく(る)|to make
+産|サン|う(む)|produce; birth
+紙|シ|かみ|paper
+思|シ|おも(う)|to think
+姉|シ|あね|older sister
+止|シ|と(まる)|to stop
+市|シ|いち|city; market
+仕|シ|つか(える)|serve; work
+死|シ|し(ぬ)|death
+使|シ|つか(う)|to use
+始|シ|はじ(める)|to begin
+試|シ|ため(す)|test; try
+私|シ|わたし|I; private
+字|ジ|—|character; letter
+自|ジ|みずか(ら)|self
+事|ジ|こと|thing; matter
+持|ジ|も(つ)|to hold
+室|シツ|—|room
+質|シツ|—|quality
+写|シャ|うつ(す)|copy; photograph
+者|シャ|もの|person
+借|シャク|か(りる)|to borrow
+弱|ジャク|よわ(い)|weak
+首|シュ|くび|neck
+主|シュ|ぬし|main; master
+秋|シュウ|あき|autumn
+習|シュウ|なら(う)|to learn
+集|シュウ|あつ(まる)|to gather
+住|ジュウ|す(む)|to live (reside)
+重|ジュウ|おも(い)|heavy
+春|シュン|はる|spring
+場|ジョウ|ば|place
+色|ショク|いろ|color
+心|シン|こころ|heart
+真|シン|ま|true
+親|シン|おや|parent
+図|ズ|—|diagram; drawing
+世|セ・セイ|よ|world; generation
+正|セイ|ただ(しい)|correct
+説|セツ|—|explain; theory
+雪|セツ|ゆき|snow
+切|セツ|き(る)|to cut
+走|ソウ|はし(る)|to run
+送|ソウ|おく(る)|to send
+族|ゾク|—|tribe; family
+太|タイ|ふと(い)|thick; fat
+体|タイ|からだ|body
+待|タイ|ま(つ)|to wait
+貸|タイ|か(す)|to lend
+台|ダイ|—|stand; counter for machines
+代|ダイ|か(わる)|substitute; era; fee
+題|ダイ|—|topic; title
+知|チ|し(る)|to know
+地|チ・ジ|—|ground; earth
+池|チ|いけ|pond
+茶|チャ|—|tea
+着|チャク|き(る)・つ(く)|wear; arrive
+昼|チュウ|ひる|noon
+注|チュウ|そそ(ぐ)|pour; note
+町|チョウ|まち|town
+鳥|チョウ|とり|bird
+朝|チョウ|あさ|morning
+通|ツウ|とお(る)・かよ(う)|pass through; commute
+弟|テイ|おとうと|younger brother
+転|テン|ころ(ぶ)|revolve; fall over
+田|デン|た|rice field
+都|ト|みやこ|capital
+度|ド|—|degree; times
+冬|トウ|ふゆ|winter
+答|トウ|こた(える)|answer
+動|ドウ|うご(く)|to move
+堂|ドウ|—|hall
+働|ドウ|はたら(く)|to work
+特|トク|—|special
+肉|ニク|—|meat
+売|バイ|う(る)|to sell
+発|ハツ|—|departure; emit
+飯|ハン|めし|meal; rice
+病|ビョウ|やまい|illness
+品|ヒン|しな|goods
+不|フ・ブ|—|not; un-
+風|フウ|かぜ|wind; style
+服|フク|—|clothes
+物|ブツ|もの|thing
+文|ブン|—|sentence; culture
+別|ベツ|わか(れる)|separate; different
+勉|ベン|—|effort; study
+方|ホウ|かた|direction; person; way
+妹|マイ|いもうと|younger sister
+味|ミ|あじ|taste
+民|ミン|たみ|people; nation
+明|メイ|あか(るい)|bright
+問|モン|と(う)|question
+夜|ヤ|よる|night
+野|ヤ|の|field
+薬|ヤク|くすり|medicine
+有|ユウ|あ(る)|to have; exist
+用|ヨウ|もち(いる)|use; business
+洋|ヨウ|—|ocean; Western
+理|リ|—|reason; logic
+旅|リョ|たび|travel
+料|リョウ|—|fee; materials
+林|リン|はやし|woods
+兄|ケイ|あに|older brother
+軽|ケイ|かる(い)|light (weight)
+計|ケイ|はか(る)|measure; plan
+研|ケン|と(ぐ)|research; sharpen
+県|ケン|—|prefecture
+建|ケン|た(てる)|to build
+験|ケン|—|test; verification
+元|ゲン・ガン|もと|origin
+言葉|—|—|SKIP
+古都|—|—|SKIP
+好|コウ|す(き)|to like
+合|ゴウ|あ(う)|fit; match
+声|セイ|こえ|voice
+青空|—|—|SKIP
+石|セキ|いし|stone
+赤字|—|—|SKIP
+夕|セキ|ゆう|evening
+強|キョウ|つよ(い)|strong
+教|キョウ|おし(える)|to teach
+業|ギョウ|—|business; industry
+近|キン|ちか(い)|near
+銀|ギン|—|silver
+区|ク|—|ward; district
+空港|—|—|SKIP
+兄弟|—|—|SKIP
+急|キュウ|いそ(ぐ)|hurry; sudden
+究|キュウ|きわ(める)|research
+牛|ギュウ|うし|cow
+去|キョ|さ(る)|past; to leave
+魚市|—|—|SKIP
+京|キョウ|—|capital (Tokyo/Kyoto)
+起|キ|お(きる)|to get up
+帰宅|—|—|SKIP
+紅|コウ|べに|crimson
+号|ゴウ|—|number; issue
+低|テイ|ひく(い)|low
+夏|カ|なつ|summer
+花火|—|—|SKIP
+遊|ユウ|あそ(ぶ)|to play
+泳|エイ|およ(ぐ)|to swim
+新聞|—|—|SKIP
+飲食|—|—|SKIP
+店員|—|—|SKIP`;
+const KANJI4=KANJI4_RAW.trim().split("\n").map(l=>l.split("|")).filter(a=>a.length===4&&a[0].length===1&&a[3]!=="SKIP");
+
 /* ================= PARSE ================= */
 const KANJI=KANJI_RAW.trim().split("\n").map(l=>l.split("|")).filter(a=>a.length===4&&a[0].length===1);
 KANJI.push(["西","セイ・サイ","にし","west"]);
@@ -616,7 +795,7 @@ tabs.forEach(([id,label])=>{
 
 /* ================= FLASHCARDS ================= */
 let fMode="kanji",fIdx=-1,fFlip=false;
-function pool(){return fMode==="kanji"?KANJI:VOCAB}
+function pool(){return fMode==="kanji"?KANJI:fMode==="kanji4"?KANJI4:VOCAB}
 function nextCard(){
   const p=pool();const dues=[];for(let i=0;i<p.length;i++)if(due(fMode,i))dues.push(i);
   fIdx=dues.length?dues[Math.floor(Math.random()*dues.length)]:Math.floor(Math.random()*p.length);
@@ -626,12 +805,13 @@ function renderFlash(dueCount){
   const el=document.getElementById("p-flash");const p=pool();
   if(fIdx<0){nextCard();return}
   const it=p[fIdx];
-  const front=fMode==="kanji"?it[0]:it[0];
-  const back=fMode==="kanji"?`<div class="mid">${it[3]}</div><p class="center muted">on: ${it[1]} &nbsp; kun: ${it[2]}</p>`
+  const front=it[0];
+  const back=fMode!=="vocab"?`<div class="mid">${it[3]}</div><p class="center muted">on: ${it[1]} &nbsp; kun: ${it[2]}</p>`
     :`<div class="mid">${it[2]}</div><p class="center muted">${it[1]} <span class="tag">${it[3]}</span></p>`;
   el.innerHTML=`
   <div class="btnrow">
-    <button class="pill ${fMode==="kanji"?"active":""}" onclick="fMode='kanji';fIdx=-1;renderFlash()">Kanji (${KANJI.length})</button>
+    <button class="pill ${fMode==="kanji"?"active":""}" onclick="fMode='kanji';fIdx=-1;renderFlash()">N5 Kanji (${KANJI.length})</button>
+    <button class="pill ${fMode==="kanji4"?"active":""}" onclick="fMode='kanji4';fIdx=-1;renderFlash()">N4 Kanji (${KANJI4.length})</button>
     <button class="pill ${fMode==="vocab"?"active":""}" onclick="fMode='vocab';fIdx=-1;renderFlash()">Vocabulary (${VOCAB.length})</button>
   </div>
   <div class="stat">${dueCount!==undefined?`Due now: ${dueCount}`:""}&nbsp; Spaced repetition: “Again” = see it soon · “Got it” = interval grows</div>
@@ -649,13 +829,14 @@ function renderFlash(dueCount){
 /* ================= QUIZ ================= */
 let q={},qScore=0,qTotal=0;
 function newQuiz(){
-  const type=Math.random()<0.5?"kanji":"vocab";
-  const p=type==="kanji"?KANJI:VOCAB;
+  const r=Math.random();const type=r<0.34?"kanji":r<0.6?"kanji4":"vocab";
+  const p=type==="kanji"?KANJI:type==="kanji4"?KANJI4:VOCAB;
+  const isK=type!=="vocab";
   const i=Math.floor(Math.random()*p.length);
-  const correct=type==="kanji"?p[i][3]:p[i][2];
+  const correct=isK?p[i][3]:p[i][2];
   const opts=new Set([correct]);
-  while(opts.size<4){const j=Math.floor(Math.random()*p.length);opts.add(type==="kanji"?p[j][3]:p[j][2])}
-  q={prompt:p[i][0],sub:type==="kanji"?"What does this kanji mean?":"Reading: "+p[i][1]+" — what does it mean?",correct,opts:[...opts].sort(()=>Math.random()-0.5),done:false};
+  while(opts.size<4){const j=Math.floor(Math.random()*p.length);opts.add(isK?p[j][3]:p[j][2])}
+  q={prompt:p[i][0],sub:isK?`What does this ${type==="kanji4"?"N4":"N5"} kanji mean?`:"Reading: "+p[i][1]+" — what does it mean?",correct,opts:[...opts].sort(()=>Math.random()-0.5),done:false};
   const el=document.getElementById("p-quiz");
   el.innerHTML=`<div class="stat">Score: ${qScore}/${qTotal}</div>
   <div class="card"><p class="center muted">${q.sub}</p><div class="big">${q.prompt}</div></div>
@@ -674,12 +855,20 @@ function tableHTML(rows,heads){
   return `<div class="card" style="max-height:65vh;overflow:auto"><table><tr>${heads.map(h=>`<th>${h}</th>`).join("")}</tr>
   ${rows.join("")}</table></div>`;
 }
+let kLevel="all";
 document.getElementById("p-kanji").innerHTML=
-  `<input type="text" placeholder="Search kanji or meaning…" oninput="filtK(this.value)">`+
+  `<div class="btnrow">
+     <button class="pill active" onclick="kLevel='all';setKPill(this);filtK(document.getElementById('kSearch').value)">All</button>
+     <button class="pill" onclick="kLevel='n5';setKPill(this);filtK(document.getElementById('kSearch').value)">N5</button>
+     <button class="pill" onclick="kLevel='n4';setKPill(this);filtK(document.getElementById('kSearch').value)">N4</button>
+   </div>
+   <input id="kSearch" type="text" placeholder="Search kanji or meaning…" oninput="filtK(this.value)">`+
   `<div id="kOut"></div>`;
+function setKPill(btn){btn.parentElement.querySelectorAll(".pill").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
 function filtK(s){
   s=(s||"").toLowerCase();
-  const rows=KANJI.filter(k=>!s||k[0].includes(s)||k[3].toLowerCase().includes(s))
+  const src=kLevel==="n5"?KANJI:kLevel==="n4"?KANJI4:KANJI.concat(KANJI4);
+  const rows=src.filter(k=>!s||k[0].includes(s)||k[3].toLowerCase().includes(s))
     .map(k=>`<tr><td class="jp">${k[0]}</td><td>${k[1]}</td><td>${k[2]}</td><td>${k[3]}</td><td><button class="pill" onclick="speakJa('${k[0]}')">🔊</button></td></tr>`);
   document.getElementById("kOut").innerHTML=tableHTML(rows,["Kanji","On’yomi","Kun’yomi","Meaning",""]);
 }
@@ -765,9 +954,9 @@ function initCanvas(){
       <div class="btnrow">
         <button class="b" onclick="wClear()">🧹 Clear</button>
         <button class="b" onclick="wTrace=!wTrace;wShow()">👁 Toggle guide</button>
-        <button class="b" onclick="speakJa(KANJI[wIdx][0])">🔊</button>
-        <button class="b" onclick="wIdx=(wIdx-1+KANJI.length)%KANJI.length;wShow()">← Prev</button>
-        <button class="b" onclick="wIdx=(wIdx+1)%KANJI.length;wShow()">Next →</button>
+        <button class="b" onclick="speakJa(WSET[wIdx][0])">🔊</button>
+        <button class="b" onclick="wIdx=(wIdx-1+WSET.length)%WSET.length;wShow()">← Prev</button>
+        <button class="b" onclick="wIdx=(wIdx+1)%WSET.length;wShow()">Next →</button>
       </div>
     </div>`;
     const c=document.getElementById("wCan");ctx=c.getContext("2d");
@@ -782,8 +971,9 @@ function initCanvas(){
   wShow();
 }
 let wTrace=true;
+const WSET=KANJI.concat(KANJI4);
 function wShow(){
-  const k=KANJI[wIdx];
+  const k=WSET[wIdx];
   document.getElementById("wRef").textContent=wTrace?k[0]:"";
   document.getElementById("wRef").style.color="#d8dce6";
   document.getElementById("wInfo").innerHTML=`<b>${k[0]}</b> — ${k[3]} <span class="muted">(on: ${k[1]} / kun: ${k[2]})</span>`;
