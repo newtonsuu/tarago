@@ -565,6 +565,47 @@ const GRAMMAR=[
 ["〜ぐらい/ごろ","Approximation: amount (gurai) / point in time (goro).","三十分ぐらいかかります。","Sanjuppun gurai kakarimasu. — It takes about 30 minutes."],
 ["〜とき","'when ~'.","暇なとき、音楽を聞きます。","Hima na toki, ongaku o kikimasu. — When I'm free, I listen to music."],
 ["〜んです","Explanation/emphasis (casual-polite).","日本で働きたいんです。","Nihon de hatarakitai n desu. — (The thing is) I want to work in Japan."]];
+const GRAMMAR4=[
+["〜ので","Reason (softer than から).","雨が降っているので、家にいます。","Ame ga futte iru node, ie ni imasu. — Since it's raining, I'll stay home."],
+["〜し","Listing multiple reasons.","このアパートは安いし、駅に近いです。","Kono apāto wa yasui shi, eki ni chikai desu. — This apartment is cheap, and it's near the station."],
+["〜たら","Conditional: 'if/when ~'.","日本に着いたら、電話します。","Nihon ni tsuitara, denwa shimasu. — When I arrive in Japan, I'll call."],
+["〜ば","Conditional: 'if ~' (hypothetical).","勉強すれば、合格できます。","Benkyō sureba, gōkaku dekimasu. — If you study, you can pass."],
+["〜と (conditional)","Natural consequence: 'whenever/if ~'.","このボタンを押すと、ドアが開きます。","Kono botan o osu to, doa ga akimasu. — If you press this button, the door opens."],
+["〜なら","Contextual conditional: 'if that's the case'.","日本語なら、任せてください。","Nihongo nara, makasete kudasai. — If it's Japanese, leave it to me."],
+["〜ても","Concession: 'even if ~'.","高くても、買います。","Takakute mo, kaimasu. — Even if it's expensive, I'll buy it."],
+["〜のに","'although/despite' (with surprise/regret).","勉強したのに、落ちました。","Benkyō shita noni, ochimashita. — Even though I studied, I failed."],
+["Potential form","'can do ~' (食べられる/行ける/できる).","漢字が読めます。","Kanji ga yomemasu. — I can read kanji."],
+["Volitional + と思う","'I think I'll ~' (intention).","来年、N3を受けようと思います。","Rainen, N3 o ukeyō to omoimasu. — I think I'll take N3 next year."],
+["〜ことができる","'be able to ~' (formal ability).","日本で働くことができます。","Nihon de hataraku koto ga dekimasu. — I am able to work in Japan."],
+["〜ことにする","Decision: 'decide to ~'.","毎日勉強することにしました。","Mainichi benkyō suru koto ni shimashita. — I decided to study every day."],
+["〜ことになる","Arranged outcome: 'it's been decided that ~'.","大阪で働くことになりました。","Ōsaka de hataraku koto ni narimashita. — It's been decided I'll work in Osaka."],
+["〜ようになる","Change over time: 'come to ~'.","日本語が話せるようになりました。","Nihongo ga hanaseru yō ni narimashita. — I've become able to speak Japanese."],
+["〜ようにする","Effort: 'try to make sure ~'.","毎日漢字を書くようにしています。","Mainichi kanji o kaku yō ni shite imasu. — I make it a point to write kanji daily."],
+["〜てしまう","Completion / regret.","財布を忘れてしまいました。","Saifu o wasurete shimaimashita. — I (regrettably) forgot my wallet."],
+["〜ておく","Preparation in advance.","面接の前に会社について調べておきます。","Mensetsu no mae ni kaisha ni tsuite shirabete okimasu. — I'll research the company before the interview."],
+["〜てみる","'try doing ~'.","納豆を食べてみました。","Nattō o tabete mimashita. — I tried eating natto."],
+["〜てあげる/くれる/もらう","Giving/receiving actions.","先輩が仕事を教えてくれました。","Senpai ga shigoto o oshiete kuremashita. — My senior kindly taught me the job."],
+["Passive (〜られる)","'be done to' — also polite.","部長に呼ばれました。","Buchō ni yobaremashita. — I was called by the department head."],
+["Causative (〜させる)","'make/let someone do'.","子供に野菜を食べさせます。","Kodomo ni yasai o tabesasemasu. — I make my child eat vegetables."],
+["〜なければならない","Obligation: 'must ~'.","ビザを更新しなければなりません。","Biza o kōshin shinakereba narimasen. — I must renew my visa."],
+["〜なくてもいい","'don't have to ~'.","明日は来なくてもいいです。","Ashita wa konakute mo ii desu. — You don't have to come tomorrow."],
+["〜はずです","Expectation: 'should be ~'.","荷物は今日届くはずです。","Nimotsu wa kyō todoku hazu desu. — The package should arrive today."],
+["〜かもしれない","Possibility: 'might ~'.","来月、日本へ行くかもしれません。","Raigetsu, Nihon e iku kamo shiremasen. — I might go to Japan next month."],
+["〜そうです (hearsay)","'I heard that ~'.","田中さんは会社を辞めるそうです。","Tanaka-san wa kaisha o yameru sō desu. — I heard Tanaka is quitting."],
+["〜そうです (appearance)","'looks like ~' (stem + そう).","雨が降りそうです。","Ame ga furisō desu. — It looks like it will rain."],
+["〜ようだ/みたいだ","Conjecture from evidence.","誰かいるようです。","Dareka iru yō desu. — It seems someone is there."],
+["〜らしい","'apparently; typical of'.","彼は忙しいらしいです。","Kare wa isogashii rashii desu. — Apparently he's busy."],
+["〜やすい/にくい","'easy/hard to ~'.","この薬は飲みやすいです。","Kono kusuri wa nomiyasui desu. — This medicine is easy to take."],
+["〜すぎる","Excess: 'too ~'.","昨日は食べすぎました。","Kinō wa tabesugimashita. — I ate too much yesterday."],
+["〜方 (かた)","'how to ~'.","この漢字の書き方を教えてください。","Kono kanji no kakikata o oshiete kudasai. — Please teach me how to write this kanji."],
+["〜たばかり","'just did ~'.","日本に来たばかりです。","Nihon ni kita bakari desu. — I just came to Japan."],
+["〜ているところ","'in the middle of ~'.","今、報告書を書いているところです。","Ima, hōkokusho o kaite iru tokoro desu. — I'm in the middle of writing the report."],
+["〜間に / 〜うちに","'while ~' (do before it changes).","独身のうちに、日本語を勉強します。","Dokushin no uchi ni, nihongo o benkyō shimasu. — I'll study Japanese while I'm single."],
+["〜ために / 〜ように","Purpose (volitional/non-volitional).","家族のために、日本で働きます。","Kazoku no tame ni, Nihon de hatarakimasu. — I work in Japan for my family."],
+["〜かどうか","'whether or not'.","合格したかどうか、まだ分かりません。","Gōkaku shita ka dō ka, mada wakarimasen. — I don't know yet whether I passed."],
+["Question word + か","Embedded question.","何時に始まるか、教えてください。","Nanji ni hajimaru ka, oshiete kudasai. — Please tell me what time it starts."],
+["〜ていただけませんか","Very polite request (keigo).","もう少しゆっくり話していただけませんか。","Mō sukoshi yukkuri hanashite itadakemasen ka. — Could you kindly speak a bit more slowly?"],
+["お〜になる / お〜する","Honorific / humble verb forms.","部長はもうお帰りになりました。","Buchō wa mō o-kaeri ni narimashita. — The manager has already gone home. (honorific)"]];
 const HIRA=[["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],["や","ya"],["ゆ","yu"],["よ","yo"],["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],["わ","wa"],["を","wo"],["ん","n"]];
 const KATA=[["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],["ヤ","ya"],["ユ","yu"],["ヨ","yo"],["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],["ワ","wa"],["ヲ","wo"],["ン","n"]];
 const SPEAK_SENTS=[
@@ -883,8 +924,10 @@ function filtV(c,btn){
   document.getElementById("vOut").innerHTML=tableHTML(rows,["Word","Reading","Meaning",""]);
 }
 filtV("all");
-document.getElementById("p-grammar").innerHTML=GRAMMAR.map(g=>
-  `<div class="card gpoint"><h3>${g[0]}</h3><p>${g[1]}</p><p class="ex">${g[2]} <button class="pill" onclick="speakJa('${g[2].replace(/'/g,"")}')">🔊</button></p><p class="tr">${g[3]}</p></div>`).join("");
+function gCard(g){return `<div class="card gpoint"><h3>${g[0]}</h3><p>${g[1]}</p><p class="ex">${g[2]} <button class="pill" onclick="speakJa('${g[2].replace(/'/g,"")}')">🔊</button></p><p class="tr">${g[3]}</p></div>`}
+document.getElementById("p-grammar").innerHTML=
+  `<h3 style="margin:8px 0;color:var(--gold)">N5 Grammar (${GRAMMAR.length})</h3>`+GRAMMAR.map(gCard).join("")+
+  `<h3 style="margin:14px 0 8px;color:var(--gold)">N4 Grammar (${GRAMMAR4.length})</h3>`+GRAMMAR4.map(gCard).join("");
 document.getElementById("p-kana").innerHTML=
   `<h3 style="margin:8px 0">Hiragana ひらがな</h3><div class="kanaGrid">${HIRA.map(k=>`<div class="kanaCell" onclick="speakJa('${k[0]}')"><div class="k">${k[0]}</div><div class="r">${k[1]}</div></div>`).join("")}</div>
    <h3 style="margin:14px 0 8px">Katakana カタカナ</h3><div class="kanaGrid">${KATA.map(k=>`<div class="kanaCell" onclick="speakJa('${k[0]}')"><div class="k">${k[0]}</div><div class="r">${k[1]}</div></div>`).join("")}</div>
