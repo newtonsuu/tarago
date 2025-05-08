@@ -1,0 +1,11 @@
+{
+  "name": "TaraGO — Japanese for Filipino Jobseekers",
+  "short_name": "TaraGO",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f1220",
+  "theme_color": "#0f1220",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
