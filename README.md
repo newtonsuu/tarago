@@ -8,7 +8,7 @@
 |---|---|
 | `docs/TaraGO_Thesis_Proposal.docx` | Mapúa IEEE-style thesis proposal (15 pp, 32 references) justifying the app. PDF copy included. |
 | `docs/TaraGO_Study_Pack.docx` | Printable study pack: 12-week N5→N4 plan, 109 kanji, 349 vocab, 40 grammar points, writing & speaking guides. PDF copy included. |
-| `index.html (live web app)` | Interactive N5/N4 reviewer web app (PWA) — open in Chrome/Edge. SRS flashcards, quizzes, kanji/vocab/grammar/kana reference, shadowing with TTS + mic check, handwriting canvas. Progress saves in browser localStorage. |
+| `index.html` | The TaraGO web app (PWA). **Learn**: Duolingo-style N5→N1 path — units with progress rings, mixed-exercise lessons (MCQ, listening, match-pairs, word-order), XP/streak/daily goal. **Review**: SRS flashcards. **Mock Exam**: JFT-Basic style. **AI Sensei**: Claude-powered tutor (bring your own API key). **Library**: kanji/vocab/grammar/kana reference, shadowing with TTS + mic check, handwriting canvas. Progress saves in browser localStorage. |
 | `scripts/` | Node scripts that regenerate the two Word documents (`npm i docx`, then `node make_thesis.js` / `node make_pack.js`). `make_pack.js` reads its data from the reviewer HTML — the HTML is the single source of truth for content. |
 
 ## Evidence base (core claims)
@@ -21,12 +21,14 @@
 
 ## Roadmap
 
-1. ✅ Thesis proposal + N5/N4 reviewer web app (PWA) + study pack
-2. ✅ N4 content wave (163 N4 kanji, 40 N4 grammar points, JFT-Basic style mock exam)
-3. ✅ Web deployment path: PWA (installable on iPhone via Safari → Add to Home Screen), GitHub Pages hosting
-4. ⬜ N4 vocabulary wave (~300 words) + occupational modules (SSW caregiving/food service, IT/keigo)
-5. ⬜ ASR pronunciation scoring beyond browser speech recognition
-6. ⬜ Pilot evaluation per Chapter 3 (ISO 25010 + quasi-experiment)
+1. ✅ Thesis proposal + study pack + PWA
+2. ✅ N4 content wave (163 kanji, 40 grammar, JFT-Basic mock exam)
+3. ✅ Duolingo-style learn path N5→N1: units, progress rings, lesson engine, XP/streak/daily goal
+4. ✅ N3/N2/N1 starter content waves + AI Sensei (Claude tutor: grammar explanations, sentence checking, interview roleplay)
+5. ⬜ Content completion waves toward full JLPT coverage (N3 ≈ 650 kanji cum., N2 ≈ 1,000, N1 ≈ 2,136; vocab to ~10k)
+6. ⬜ Occupational modules (SSW caregiving/food service, IT/keigo) as path overlays
+7. ⬜ ASR pronunciation scoring beyond browser speech recognition
+8. ⬜ Pilot evaluation per Chapter 3 (ISO 25010 + quasi-experiment)
 
 ## Deployment
 
