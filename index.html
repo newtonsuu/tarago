@@ -52,12 +52,51 @@ canvas{background:#fff;border-radius:12px;touch-action:none;display:block;margin
 .writeRef{font-size:7rem;text-align:center;color:#233;font-family:'Yu Gothic',sans-serif;line-height:1.1}
 progress{width:100%;height:10px}
 .notice{font-size:.8rem;color:var(--mut);margin-top:8px;text-align:center}
+/* ---- Learn path ---- */
+#statbar{display:flex;gap:14px;justify-content:center;align-items:center;padding:6px;font-size:.95rem}
+#statbar span{background:var(--card);border:1px solid #2e3765;border-radius:12px;padding:4px 12px}
+.lvlHead{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.lvlHead h2{font-size:1.1rem;color:var(--gold)}
+.lvlHead .bar{flex:1;height:8px;background:var(--card);border-radius:6px;overflow:hidden}
+.lvlHead .bar i{display:block;height:100%;background:var(--acc2)}
+.path{display:flex;flex-direction:column;align-items:center;gap:18px;padding:6px 0}
+.node{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;border:none;color:var(--txt);font-size:.72rem;background:var(--card2)}
+.node .ico{font-size:1.6rem}
+.node.done{background:#1d4030;border:3px solid var(--ok)}
+.node.open{background:var(--card2);border:3px solid var(--acc2);box-shadow:0 0 18px #4dd0e155}
+.node.lock{opacity:.45;cursor:not-allowed}
+.node .ring{position:absolute;inset:-8px;border-radius:50%;pointer-events:none}
+.node:nth-child(odd){transform:translateX(-60px)}
+.node:nth-child(even){transform:translateX(60px)}
+/* ---- lesson ---- */
+.lessonTop{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.lessonTop .bar{flex:1;height:14px;background:var(--card);border-radius:8px;overflow:hidden}
+.lessonTop .bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.bank button{background:var(--card2);border:1px solid #3a4478;border-radius:10px;color:var(--txt);padding:8px 12px;cursor:pointer;font-size:1rem}
+.bank button.used{opacity:.25;pointer-events:none}
+.answerLine{min-height:46px;border-bottom:2px solid #3a4478;display:flex;flex-wrap:wrap;gap:8px;padding:6px;justify-content:center;margin:10px 0}
+.answerLine button{background:var(--acc2);color:#08222a;border:none;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:1rem}
+.pairCols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.pairCols button{padding:14px;border-radius:12px;border:1px solid #3a4478;background:var(--card2);color:var(--txt);cursor:pointer;font-size:1.05rem}
+.pairCols button.sel{border-color:var(--gold);background:#3a3418}
+.pairCols button.done{opacity:.3;pointer-events:none}
+.pairCols button.err{border-color:var(--acc);background:#46202c}
+.xpPop{text-align:center;font-size:2rem;color:var(--gold);margin:20px 0}
+/* ---- AI ---- */
+.chat{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;padding:4px}
+.msg{padding:10px 14px;border-radius:14px;max-width:85%;line-height:1.5;font-size:.95rem;white-space:pre-wrap}
+.msg.user{background:var(--acc);color:#fff;align-self:flex-end}
+.msg.ai{background:var(--card2);align-self:flex-start}
+.chatIn{display:flex;gap:8px;margin-top:10px}
+.chatIn input{flex:1}
 </style>
 </head>
 <body>
 <header>
   <h1>Tara<span>GO</span> — JLPT N5 Reviewer</h1>
   <p>Kanji • Vocabulary • Grammar • Speaking • Writing — evidence-based review for your road to Japan 🇵🇭→🇯🇵</p>
+  <div id="statbar"></div>
 </header>
 <nav id="nav"></nav>
 <main id="main"></main>
@@ -1106,16 +1145,254 @@ function grade(t,i,ok){
 }
 
 /* ================= UI SHELL ================= */
-const tabs=[["flash","🃏 Flashcards"],["quiz","✅ Quiz"],["mock","📝 Mock Exam"],["kanji","漢 Kanji"],["vocab","語 Vocabulary"],["grammar","文 Grammar"],["kana","あ Kana"],["speak","🎤 Speak"],["write","✍️ Write"]];
+const tabs=[["learn","🗾 Learn"],["flash","🃏 Review"],["quiz","✅ Quiz"],["mock","📝 Mock Exam"],["ai","🤖 AI Sensei"],["kanji","漢 Kanji"],["vocab","語 Vocabulary"],["grammar","文 Grammar"],["kana","あ Kana"],["speak","🎤 Speak"],["write","✍️ Write"]];
 const nav=document.getElementById("nav"),main=document.getElementById("main");
 tabs.forEach(([id,label])=>{
   const b=document.createElement("button");b.textContent=label;b.dataset.t=id;
   b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
     document.querySelectorAll(".panel").forEach(p=>p.classList.remove("show"));document.getElementById("p-"+id).classList.add("show");
-    if(id==="flash")renderFlash();if(id==="quiz")newQuiz();if(id==="write")initCanvas();if(id==="mock")mockHome();};
+    if(id==="flash")renderFlash();if(id==="quiz")newQuiz();if(id==="write")initCanvas();if(id==="mock")mockHome();if(id==="learn")renderPath();if(id==="ai")renderAI();};
   nav.appendChild(b);
   const p=document.createElement("div");p.className="panel";p.id="p-"+id;main.appendChild(p);
 });
+
+/* ================= LEARN PATH (Duolingo-style) ================= */
+const LEVELS=[
+ {id:"N5",name:"N5 — Foundations",kanji:KANJI,vocab:VOCAB,gram:GRAMMAR,goal:"Survival Japanese · base for everything"},
+ {id:"N4",name:"N4 — SSW Gate 🎯",kanji:KANJI4,vocab:VOCAB,gram:GRAMMAR4,goal:"JLPT N4 / JFT-Basic = SSW visa language requirement"},
+ {id:"N3",name:"N3 — Workplace Bridge",kanji:KANJI3,vocab:VOCAB3,gram:GRAMMAR3,goal:"Everyday workplace fluency"},
+ {id:"N2",name:"N2 — Engineer Gate 🎯",kanji:KANJI2,vocab:VOCAB2,gram:GRAMMAR2,goal:"Business Japanese · typical IT/engineer hiring bar"},
+ {id:"N1",name:"N1 — Mastery",kanji:KANJI1,vocab:VOCAB1,gram:GRAMMAR1,goal:"Near-native · keigo mastery"}];
+const UNIT_ICONS=["⛩️","🍙","🗻","🌸","🏮","🚅","🎌","🏯","🍜","🎋"];
+function buildUnits(lv){
+  const nk=Math.ceil(lv.kanji.length/8),nv=Math.ceil(lv.vocab.length/12),ng=Math.ceil(lv.gram.length/4);
+  const n=Math.max(nk,nv,ng);
+  return Array.from({length:n},(_,i)=>({
+    id:lv.id+"-u"+i,lvl:lv.id,idx:i,
+    kanji:lv.kanji.slice(i*8,(i+1)*8),
+    vocab:lv.vocab.slice(i*12,(i+1)*12),
+    gram:lv.gram.slice(i*4,(i+1)*4)
+  }));
+}
+const ALL_UNITS=LEVELS.flatMap(buildUnits);
+function uProg(id){return (store.units&&store.units[id])||0}
+const LESSONS_PER_UNIT=3;
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function addXP(n){
+  store.xp=(store.xp||0)+n;
+  const t=todayKey();
+  if(store.lastDay!==t){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    store.streak=(store.lastDay===y)?(store.streak||0)+1:1;
+    store.lastDay=t;
+  }
+  store.todayXP=(store.dayKey===t?(store.todayXP||0):0)+n;store.dayKey=t;
+  saveStore();statbar();
+}
+function statbar(){
+  const goal=50,tx=store.dayKey===todayKey()?(store.todayXP||0):0;
+  document.getElementById("statbar").innerHTML=
+   `<span>🔥 ${store.streak||0} day streak</span><span>⚡ ${store.xp||0} XP</span><span>🎯 ${Math.min(tx,goal)}/${goal} today</span>`;
+}
+function renderPath(){
+  const el=document.getElementById("p-learn");
+  let html="";
+  LEVELS.forEach(lv=>{
+    const units=ALL_UNITS.filter(u=>u.lvl===lv.id);
+    const done=units.reduce((a,u)=>a+Math.min(uProg(u.id),LESSONS_PER_UNIT),0);
+    const pct=Math.round(100*done/(units.length*LESSONS_PER_UNIT));
+    html+=`<div class="lvlHead"><h2>${lv.name}</h2><div class="bar"><i style="width:${pct}%"></i></div><span class="muted" style="font-size:.8rem">${pct}%</span></div>
+    <p class="muted" style="font-size:.82rem;margin-bottom:8px">${lv.goal}</p><div class="path">`;
+    units.forEach((u,i)=>{
+      const p=uProg(u.id);
+      const prevDone=i===0?true:uProg(units[i-1].id)>=1;
+      const globalFirst=lv.id==="N5"||ALL_UNITS.filter(x=>x.lvl===lv.id)[0]!==u||true;
+      const state=p>=LESSONS_PER_UNIT?"done":prevDone?"open":"lock";
+      const ring=state==="open"?`<div class="ring" style="background:conic-gradient(var(--acc2) ${p/LESSONS_PER_UNIT*360}deg,transparent 0);mask:radial-gradient(closest-side,transparent 84%,black 85%);-webkit-mask:radial-gradient(closest-side,transparent 84%,black 85%)"></div>`:"";
+      html+=`<button class="node ${state}" ${state!=="lock"?`onclick="startLesson('${u.id}')"`:""}>
+        ${ring}<span class="ico">${state==="done"?"👑":state==="lock"?"🔒":UNIT_ICONS[i%UNIT_ICONS.length]}</span>
+        <span>Unit ${i+1}</span></button>`;
+    });
+    html+="</div>";
+  });
+  html+=`<p class="notice">Each unit = 8 kanji · 12 vocab · 4 grammar patterns, taught through ${LESSONS_PER_UNIT} mixed-exercise lessons. Content grows in waves — N3–N1 units unlock as new waves ship.</p>`;
+  el.innerHTML=html;statbar();
+}
+/* ---- lesson engine ---- */
+let L={};
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
+function startLesson(uid){
+  const u=ALL_UNITS.find(x=>x.id===uid);
+  const ex=[];
+  const vpool=u.vocab.length?u.vocab:VOCAB;
+  const kpool=u.kanji.length?u.kanji:KANJI;
+  shuffle(vpool).slice(0,3).forEach(v=>ex.push({t:"vmcq",v}));
+  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"listen",v}));
+  shuffle(kpool).slice(0,2).forEach(k=>ex.push({t:"kmcq",k}));
+  if(vpool.length>=4)ex.push({t:"pairs",set:shuffle(vpool).slice(0,4)});
+  shuffle(u.gram.length?u.gram:GRAMMAR).slice(0,2).forEach(g=>ex.push({t:"order",g}));
+  L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,inRetry:false};
+  // end on an easy one (research: end on success)
+  L.ex.push({t:"vmcq",v:shuffle(vpool)[0],easy:true});
+  lessonQ();
+}
+function lessonBar(){
+  const total=L.ex.length+L.wrong.length;
+  return `<div class="lessonTop"><button class="pill" onclick="renderPath()">✕</button>
+    <div class="bar"><i style="width:${Math.round(100*L.i/total)}%"></i></div><span class="muted">⚡${L.xp}</span></div>`;
+}
+function lessonQ(){
+  const el=document.getElementById("p-learn");
+  let item;
+  if(L.i<L.ex.length)item=L.ex[L.i];
+  else if(L.wrong.length){item=L.wrong.shift();L.retryItem=true}
+  else{lessonDone();return}
+  L.cur=item;L.locked=false;
+  const mk=(prompt,sub,opts,correct,audio)=>{
+    el.innerHTML=lessonBar()+
+    `<div class="card"><p class="center muted">${sub}</p><div class="${prompt.length>4?"mid":"big"}">${prompt}</div>
+     ${audio?`<div class="btnrow"><button class="b" onclick="speakJa('${audio}')">🔊</button></div>`:""}</div>`+
+    shuffle(opts).map(o=>`<button class="opt" onclick="lessonAns(this,\`${o}\`,\`${correct}\`)">${o}</button>`).join("");
+    if(audio)setTimeout(()=>speakJa(audio),300);
+  };
+  if(item.t==="vmcq"){
+    const d=shuffle(VOCAB.concat(VOCAB3,VOCAB2)).filter(v=>v[2]!==item.v[2]).slice(0,3).map(v=>v[2]);
+    mk(item.v[0],"What does this mean?",[item.v[2],...d],item.v[2]);
+  }else if(item.t==="listen"){
+    const d=shuffle(VOCAB).filter(v=>v[2]!==item.v[2]).slice(0,3).map(v=>v[2]);
+    mk("🔊","Listen — what did you hear?",[item.v[2],...d],item.v[2],item.v[0]);
+  }else if(item.t==="kmcq"){
+    const pool=KANJI.concat(KANJI4,KANJI3,KANJI2,KANJI1);
+    const d=shuffle(pool).filter(k=>k[3]!==item.k[3]).slice(0,3).map(k=>k[3]);
+    mk(item.k[0],"What does this kanji mean?",[item.k[3],...d],item.k[3]);
+  }else if(item.t==="pairs"){
+    lessonPairs(item);
+  }else if(item.t==="order"){
+    lessonOrder(item);
+  }
+}
+function lessonAns(btn,val,correct){
+  if(L.locked)return;L.locked=true;
+  document.querySelectorAll(".opt").forEach(b=>{if(b.textContent===correct)b.classList.add("correct")});
+  if(val===correct){L.xp+=10;addXP(10)}
+  else{btn.classList.add("wrong");if(!L.retryItem)L.wrong.push(L.cur)}
+  L.retryItem=false;
+  setTimeout(()=>{L.i++;lessonQ()},1000);
+}
+function lessonPairs(item){
+  const el=document.getElementById("p-learn");
+  const left=shuffle(item.set),right=shuffle(item.set);
+  el.innerHTML=lessonBar()+`<div class="card"><p class="center muted">Match the pairs</p>
+  <div class="pairCols">
+    <div>${left.map(v=>`<button style="width:100%;margin-bottom:8px" data-k="${v[0]}" onclick="pairPick(this,'L')">${v[0]}</button>`).join("")}</div>
+    <div>${right.map(v=>`<button style="width:100%;margin-bottom:8px" data-k="${v[0]}" onclick="pairPick(this,'R')">${v[2]}</button>`).join("")}</div>
+  </div></div>`;
+  L.pairSel={};L.pairLeft=item.set.length;
+}
+function pairPick(btn,side){
+  if(L.pairSel[side]){L.pairSel[side].classList.remove("sel")}
+  L.pairSel[side]=btn;btn.classList.add("sel");
+  const o=side==="L"?"R":"L";
+  if(L.pairSel[o]){
+    const a=L.pairSel.L,b=L.pairSel.R;
+    if(a.dataset.k===b.dataset.k){
+      a.classList.add("done");b.classList.add("done");L.xp+=5;addXP(5);
+      if(--L.pairLeft===0){setTimeout(()=>{L.i++;lessonQ()},600)}
+    }else{
+      a.classList.add("err");b.classList.add("err");
+      setTimeout(()=>{a.classList.remove("err");b.classList.remove("err")},500);
+    }
+    a.classList.remove("sel");b.classList.remove("sel");L.pairSel={};
+  }
+}
+function lessonOrder(item){
+  const el=document.getElementById("p-learn");
+  const words=item.g[3].split("—")[0].trim().replace(/[.,!?]/g,"").split(/\s+/);
+  L.orderTarget=words.join(" ");L.orderPicked=[];
+  el.innerHTML=lessonBar()+`<div class="card">
+    <p class="center muted">Arrange the romaji to match what you hear</p>
+    <p class="mid">${item.g[2]}</p>
+    <div class="btnrow"><button class="b" onclick="speakJa('${item.g[2].replace(/'/g,"")}')">🔊</button></div>
+    <div class="answerLine" id="ansLine"></div>
+    <div class="bank" id="bank">${shuffle(words).map((w,i)=>`<button id="bw${i}" onclick="orderPick(this,'${w.replace(/'/g,"\\'")}')">${w}</button>`).join("")}</div>
+    <div class="btnrow"><button class="b good" onclick="orderCheck()">Check</button></div>
+    <p class="center muted" style="font-size:.8rem;margin-top:6px">${item.g[0]} — ${item.g[1]}</p></div>`;
+  setTimeout(()=>speakJa(item.g[2]),300);
+}
+function orderPick(btn,w){
+  btn.classList.add("used");L.orderPicked.push({w,btn});
+  const line=document.getElementById("ansLine");
+  const b=document.createElement("button");b.textContent=w;
+  b.onclick=()=>{line.removeChild(b);btn.classList.remove("used");L.orderPicked=L.orderPicked.filter(p=>p.btn!==btn)};
+  line.appendChild(b);
+}
+function orderCheck(){
+  const got=L.orderPicked.map(p=>p.w).join(" ");
+  const ok=got.toLowerCase()===L.orderTarget.toLowerCase();
+  if(ok){L.xp+=15;addXP(15)}else if(!L.retryItem){L.wrong.push(L.cur)}
+  L.retryItem=false;
+  const el=document.getElementById("ansLine");
+  el.style.borderColor=ok?"var(--ok)":"var(--acc)";
+  setTimeout(()=>{L.i++;lessonQ()},ok?700:1400);
+  if(!ok)el.insertAdjacentHTML("afterend",`<p class="center" style="color:var(--acc)">Answer: ${L.orderTarget}</p>`);
+}
+function lessonDone(){
+  const u=L.u;
+  store.units=store.units||{};
+  store.units[u.id]=Math.min((store.units[u.id]||0)+1,LESSONS_PER_UNIT);
+  L.xp+=20;addXP(20);
+  document.getElementById("p-learn").innerHTML=`
+  <div class="card center">
+    <div class="xpPop">⚡ +${L.xp} XP</div>
+    <h3 style="color:var(--ok)">Lesson complete! すごい!</h3>
+    <p class="muted" style="margin:8px 0">Unit progress: ${store.units[u.id]}/${LESSONS_PER_UNIT} ${store.units[u.id]>=LESSONS_PER_UNIT?"— 👑 Unit mastered!":""}</p>
+    <div class="btnrow">
+      <button class="b good" onclick="startLesson('${u.id}')">Another lesson</button>
+      <button class="b" onclick="renderPath()">Back to path</button>
+    </div>
+  </div>`;
+}
+
+/* ================= AI SENSEI ================= */
+let aiHist=[];
+function renderAI(){
+  const el=document.getElementById("p-ai");
+  const key=store.aiKey||"";
+  el.innerHTML=`
+  <div class="card">
+    <p class="muted" style="font-size:.85rem">AI Sensei uses Claude. Paste an Anthropic API key (console.anthropic.com → API keys). It's stored only on this device.</p>
+    <div class="chatIn"><input type="text" id="aiKey" placeholder="sk-ant-..." value="${key}"><button class="b" onclick="store.aiKey=document.getElementById('aiKey').value.trim();saveStore();renderAI()">Save</button></div>
+  </div>
+  <div class="btnrow">
+    <button class="pill" onclick="aiPrompt('Explain the difference between は and が with simple examples for a Filipino learner.')">は vs が</button>
+    <button class="pill" onclick="aiPrompt('Check this Japanese sentence and correct my mistakes, explaining in simple English: ')">✍️ Check my sentence</button>
+    <button class="pill" onclick="aiPrompt('Roleplay: you are a Japanese interviewer for a job in Japan. Interview me in simple Japanese (N4 level), one question at a time, and gently correct my answers. Start now.')">💼 Interview roleplay</button>
+    <button class="pill" onclick="aiPrompt('Give me 5 new practice sentences using grammar I might be learning at JLPT N4 level, with furigana-style readings and English translations.')">Practice sentences</button>
+  </div>
+  <div class="chat" id="chatBox">${aiHist.map(m=>`<div class="msg ${m.role==="user"?"user":"ai"}">${m.content.replace(/</g,"&lt;")}</div>`).join("")||'<p class="notice">Ask anything about Japanese — grammar, nuance, keigo, JLPT strategy, or practice conversation.</p>'}</div>
+  <div class="chatIn"><input type="text" id="aiIn" placeholder="Ask AI Sensei… (English or Japanese)" onkeydown="if(event.key==='Enter')aiSend()"><button class="b good" onclick="aiSend()">Send</button></div>`;
+  const cb=document.getElementById("chatBox");cb.scrollTop=cb.scrollHeight;
+}
+function aiPrompt(t){const i=document.getElementById("aiIn");i.value=t;i.focus()}
+async function aiSend(){
+  const inp=document.getElementById("aiIn"),text=inp.value.trim();
+  if(!text)return;
+  if(!store.aiKey){aiHist.push({role:"assistant",content:"Please paste and save an Anthropic API key above first, then try again."});renderAI();return}
+  aiHist.push({role:"user",content:text});inp.value="";renderAI();
+  aiHist.push({role:"assistant",content:"…"});renderAI();
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"content-type":"application/json","x-api-key":store.aiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:800,
+        system:"You are AI Sensei inside TaraGO, a Japanese-learning app for Filipino jobseekers heading to Japan (JLPT N5–N1, SSW and engineer visa tracks). Be warm, concise, and practical. Use romaji plus kana/kanji. Explain at the learner's level; default to N5–N4 unless they show higher ability. Occasionally use Filipino (Taglish) to clarify tricky points.",
+        messages:aiHist.slice(0,-1).slice(-12)})
+    });
+    const data=await res.json();
+    aiHist[aiHist.length-1]={role:"assistant",content:data.content?data.content.map(c=>c.text||"").join(""):(data.error?("Error: "+data.error.message):"No response")};
+  }catch(e){aiHist[aiHist.length-1]={role:"assistant",content:"Network error: "+e.message}}
+  renderAI();
+}
 
 /* ================= FLASHCARDS ================= */
 let fMode="kanji",fIdx=-1,fFlip=false;
@@ -1379,6 +1656,7 @@ function wClear(){if(ctx)ctx.clearRect(0,0,280,280)}
 
 /* boot */
 document.querySelector("nav button").click();
+statbar();
 if(speechSynthesis)speechSynthesis.getVoices();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{})}
 </script>
