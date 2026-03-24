@@ -823,13 +823,13 @@ function grade(t,i,ok){
 }
 
 /* ================= UI SHELL ================= */
-const tabs=[["flash","🃏 Flashcards"],["quiz","✅ Quiz"],["kanji","漢 Kanji"],["vocab","語 Vocabulary"],["grammar","文 Grammar"],["kana","あ Kana"],["speak","🎤 Speak"],["write","✍️ Write"]];
+const tabs=[["flash","🃏 Flashcards"],["quiz","✅ Quiz"],["mock","📝 Mock Exam"],["kanji","漢 Kanji"],["vocab","語 Vocabulary"],["grammar","文 Grammar"],["kana","あ Kana"],["speak","🎤 Speak"],["write","✍️ Write"]];
 const nav=document.getElementById("nav"),main=document.getElementById("main");
 tabs.forEach(([id,label])=>{
   const b=document.createElement("button");b.textContent=label;b.dataset.t=id;
   b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
     document.querySelectorAll(".panel").forEach(p=>p.classList.remove("show"));document.getElementById("p-"+id).classList.add("show");
-    if(id==="flash")renderFlash();if(id==="quiz")newQuiz();if(id==="write")initCanvas();};
+    if(id==="flash")renderFlash();if(id==="quiz")newQuiz();if(id==="write")initCanvas();if(id==="mock")mockHome();};
   nav.appendChild(b);
   const p=document.createElement("div");p.className="panel";p.id="p-"+id;main.appendChild(p);
 });
@@ -932,6 +932,76 @@ document.getElementById("p-kana").innerHTML=
   `<h3 style="margin:8px 0">Hiragana ひらがな</h3><div class="kanaGrid">${HIRA.map(k=>`<div class="kanaCell" onclick="speakJa('${k[0]}')"><div class="k">${k[0]}</div><div class="r">${k[1]}</div></div>`).join("")}</div>
    <h3 style="margin:14px 0 8px">Katakana カタカナ</h3><div class="kanaGrid">${KATA.map(k=>`<div class="kanaCell" onclick="speakJa('${k[0]}')"><div class="k">${k[0]}</div><div class="r">${k[1]}</div></div>`).join("")}</div>
    <p class="notice">Tap any kana to hear it.</p>`;
+
+/* ================= MOCK EXAM (JFT-Basic style) ================= */
+// sec: SV=Script&Vocabulary, CE=Conversation&Expression, LC=Listening, RC=Reading
+const MOCK=[
+{sec:"SV",q:"「毎朝七時に<u>起きます</u>。」— Choose the reading of 起きます.",opts:["おきます","いきます","ききます","あきます"],a:0},
+{sec:"SV",q:"「駅の<u>近く</u>に住んでいます。」— Choose the reading of 近く.",opts:["とおく","ちかく","はやく","おそく"],a:1},
+{sec:"SV",q:"Choose the correct kanji: 「にほんで<u>はたらきます</u>。」",opts:["働きます","動きます","勉きます","建きます"],a:0},
+{sec:"SV",q:"「この<u>薬</u>を一日三回飲んでください。」— 薬 means:",opts:["tea","medicine","water","food"],a:1},
+{sec:"SV",q:"Which word means 'convenient'?",opts:["しんせつ","べんり","ゆうめい","にぎやか"],a:1},
+{sec:"SV",q:"「試験」の意味は？ (What is 試験?)",opts:["homework","meeting","exam","holiday"],a:2},
+{sec:"SV",q:"Choose the correct particle: 「バス___乗ります。」",opts:["を","に","で","が"],a:1},
+{sec:"SV",q:"Choose the correct form: 「明日、雨が___そうです。」(looks like)",opts:["降る","降り","降って","降った"],a:1},
+{sec:"CE",q:"A coworker says 「お先に失礼します」 when leaving. You reply:",opts:["お疲れさまでした","いただきます","ごちそうさま","おかえりなさい"],a:0},
+{sec:"CE",q:"Your manager asks 「この仕事、明日までにできますか。」 You're not sure. Best reply:",opts:["できません。","たぶん大丈夫だと思いますが、確認します。","知りません。","嫌です。"],a:1},
+{sec:"CE",q:"First day at work. Choose the best self-introduction ending:",opts:["じゃあね!","どうぞよろしくお願いします。","バイバイ!","はい、終わり。"],a:1},
+{sec:"CE",q:"You didn't hear the instruction. Politest way to ask again:",opts:["何?","え?","もう一度お願いできますか。","聞こえない。"],a:2},
+{sec:"CE",q:"A customer enters the restaurant. You say:",opts:["いらっしゃいませ","ごめんください","おじゃまします","いってらっしゃい"],a:0},
+{sec:"CE",q:"You want to leave work early because you feel sick:",opts:["帰る!","気分が悪いので、早退してもよろしいでしょうか。","病気。さようなら。","今日は無理。"],a:1},
+{sec:"CE",q:"Your senpai helped you. Best response:",opts:["どうも。","ありがとうございます。助かりました。","うん。","オッケー。"],a:1},
+{sec:"CE",q:"Choose the correct request: 「すみません、写真を___いただけませんか。」",opts:["とる","とった","とって","とり"],a:2},
+{sec:"LC",q:"🔊 Listen, then answer: What time does the meeting start?",audio:"会議は午後二時から始まります。",opts:["10:00 a.m.","noon","2:00 p.m.","5:00 p.m."],a:2},
+{sec:"LC",q:"🔊 Listen: Where should you go?",audio:"三階の会議室に来てください。",opts:["1st floor office","3rd floor meeting room","2nd floor lobby","basement"],a:1},
+{sec:"LC",q:"🔊 Listen: What is the person asking you to do?",audio:"この書類をコピーしてください。",opts:["throw away the documents","copy the documents","sign the documents","read the documents aloud"],a:1},
+{sec:"LC",q:"🔊 Listen: What's the weather warning?",audio:"明日は雪が降るので、電車が遅れるかもしれません。",opts:["Rain may cancel work","Snow may delay trains","A typhoon is coming","It will be very hot"],a:1},
+{sec:"RC",q:"Notice: 「休みたい時は、三日前までに課長に言ってください。」— When must you tell your section chief you want a day off?",opts:["the same day","one day before","three days before","one week before"],a:2},
+{sec:"RC",q:"Sign: 「ここでタバコを吸ってはいけません。」— This sign means:",opts:["Smoking area","No smoking here","No eating here","No parking"],a:1},
+{sec:"RC",q:"Message: 「田中さんへ 会議は明日の朝十時に変わりました。資料を持ってきてください。」— What changed?",opts:["The meeting place","The meeting time","The attendees","The documents"],a:1},
+{sec:"RC",q:"Schedule note: 「月曜日と木曜日はゴミの日です。朝八時までに出してください。」— What must you do?",opts:["Take out trash by 8 a.m. Mon & Thu","Take out trash after 8 a.m.","Clean the office Mon & Thu","Arrive at work by 8 a.m."],a:0}];
+const SECNAMES={SV:"Script & Vocabulary",CE:"Conversation & Expression",LC:"Listening",RC:"Reading"};
+let mQ=[],mI=0,mScore={},mDone=false;
+function mockHome(){
+  document.getElementById("p-mock").innerHTML=`
+  <div class="card center">
+    <h3 style="color:var(--acc2);margin-bottom:8px">JFT-Basic Style Mock Exam</h3>
+    <p class="muted">${MOCK.length} questions across 4 sections, modeled on the Japan Foundation Test for Basic Japanese (the SSW-visa alternative to JLPT N4). Listening items use audio — tap 🔊 as many times as you need.</p>
+    <p class="muted" style="margin-top:6px">Target: 80%+ ≈ JFT-Basic pass zone (250-scale, pass = 200).</p>
+    <div class="btnrow"><button class="b good" onclick="mockStart()">Start exam →</button></div>
+  </div>`;
+}
+function mockStart(){mQ=[...MOCK];mI=0;mScore={};mDone=false;mockQ()}
+function mockQ(){
+  if(mI>=mQ.length){mockResult();return}
+  const it=mQ[mI];
+  document.getElementById("p-mock").innerHTML=`
+  <div class="stat">Question ${mI+1}/${mQ.length} — <span style="color:var(--gold)">${SECNAMES[it.sec]}</span></div>
+  <div class="card"><p style="font-size:1.1rem;line-height:1.6">${it.q}</p>
+  ${it.audio?`<div class="btnrow"><button class="b" onclick="speakJa('${it.audio}')">🔊 Play audio</button><button class="b" onclick="speakJa('${it.audio}',0.75)">🐢 Slow</button></div>`:""}
+  </div>
+  ${it.opts.map((o,i)=>`<button class="opt" onclick="mockAns(this,${i})">${o}</button>`).join("")}`;
+  if(it.audio)setTimeout(()=>speakJa(it.audio),400);
+}
+function mockAns(btn,i){
+  if(mDone)return;mDone=true;
+  const it=mQ[mI];
+  mScore[it.sec]=mScore[it.sec]||{ok:0,n:0};mScore[it.sec].n++;
+  document.querySelectorAll(".opt").forEach((b,j)=>{if(j===it.a)b.classList.add("correct")});
+  if(i===it.a){mScore[it.sec].ok++}else{btn.classList.add("wrong")}
+  setTimeout(()=>{mI++;mDone=false;mockQ()},1100);
+}
+function mockResult(){
+  const tot=Object.values(mScore).reduce((a,s)=>a+s.ok,0),n=Object.values(mScore).reduce((a,s)=>a+s.n,0);
+  const pct=Math.round(100*tot/n);
+  document.getElementById("p-mock").innerHTML=`
+  <div class="card center">
+    <h3 style="color:var(--acc2)">Result: ${tot}/${n} (${pct}%)</h3>
+    <p style="margin:8px 0;color:${pct>=80?"var(--ok)":pct>=60?"var(--gold)":"var(--acc)"}">${pct>=80?"✅ Pass zone — you'd likely clear JFT-Basic. Book the real test!":pct>=60?"🟡 Close — drill your weakest section below for a week, then retake.":"🔴 Not yet — go back to the 12-week plan and rebuild the weak areas."}</p>
+    ${Object.entries(mScore).map(([s,v])=>`<p>${SECNAMES[s]}: ${v.ok}/${v.n}</p>`).join("")}
+    <div class="btnrow"><button class="b good" onclick="mockStart()">Retake</button><button class="b" onclick="mockHome()">Back</button></div>
+  </div>`;
+}
 
 /* ================= SPEAK ================= */
 let sIdx=0;
