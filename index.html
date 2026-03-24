@@ -606,6 +606,289 @@ const GRAMMAR4=[
 ["Question word + か","Embedded question.","何時に始まるか、教えてください。","Nanji ni hajimaru ka, oshiete kudasai. — Please tell me what time it starts."],
 ["〜ていただけませんか","Very polite request (keigo).","もう少しゆっくり話していただけませんか。","Mō sukoshi yukkuri hanashite itadakemasen ka. — Could you kindly speak a bit more slowly?"],
 ["お〜になる / お〜する","Honorific / humble verb forms.","部長はもうお帰りになりました。","Buchō wa mō o-kaeri ni narimashita. — The manager has already gone home. (honorific)"]];
+// ---- N3/N2/N1 starter waves (expandable) ----
+const KANJI3_RAW=`政|セイ|まつりごと|politics
+議|ギ|—|deliberation
+民|ミン|たみ|people
+連|レン|つ(れる)|connect; group
+対|タイ|—|versus; against
+部|ブ|—|department; part
+相|ソウ|あい|mutual; minister
+定|テイ|さだ(める)|fix; decide
+選|セン|えら(ぶ)|to choose
+実|ジツ|み・じつ|truth; fruit
+関|カン|せき|connection; barrier
+決|ケツ|き(める)|to decide
+全|ゼン|まった(く)|whole; entirely
+表|ヒョウ|あらわ(す)|express; chart
+戦|セン|たたか(う)|war; fight
+最|サイ|もっと(も)|most
+現|ゲン|あらわ(れる)|present; appear
+調|チョウ|しら(べる)|investigate; tone
+化|カ|ば(ける)|change into
+当|トウ|あ(たる)|hit; appropriate
+約|ヤク|—|promise; approximately
+法|ホウ|—|law; method
+性|セイ|—|nature; gender
+的|テキ|まと|target; -like
+要|ヨウ|い(る)|need; essential
+制|セイ|—|system; control
+治|ジ・チ|なお(る)|govern; cure
+務|ム|つと(める)|duty
+成|セイ|な(る)|become; achieve
+期|キ|—|period; term
+取|シュ|と(る)|to take
+米|ベイ|こめ|rice; America
+変|ヘン|か(わる)|change; strange
+信|シン|しん(じる)|believe; trust
+組|ソ|く(む)|assemble; group
+directly|—|—|SKIP
+違|イ|ちが(う)|differ; wrong
+和|ワ|—|harmony; Japan
+供|キョウ|そな(える)|offer; companion
+験|—|—|SKIP
+面|メン|おもて|face; surface
+利|リ|き(く)|advantage
+受|ジュ|う(ける)|to receive
+続|ゾク|つづ(く)|to continue
+進|シン|すす(む)|to advance
+記|キ|しる(す)|record
+初|ショ|はじ(め)|first
+資|シ|—|resources; capital
+判|ハン|—|judge
+済|サイ|す(む)|finish; economy
+断|ダン|ことわ(る)|cut off; refuse
+費|ヒ|つい(やす)|expense
+増|ゾウ|ふ(える)|to increase
+減|ゲン|へ(る)|to decrease
+確|カク|たし(か)|certain
+報|ホウ|むく(いる)|report; reward
+状|ジョウ|—|condition; letter
+情|ジョウ|なさ(け)|emotion; information
+易|エキ・イ|やさ(しい)|easy; trade
+守|シュ|まも(る)|to protect
+君|クン|きみ|you (casual); Mr.
+段|ダン|—|step; grade
+落|ラク|お(ちる)|to fall
+残|ザン|のこ(る)|to remain
+念|ネン|—|thought; wish`;
+const KANJI2_RAW=`経|ケイ|へ(る)|pass through; manage
+済|—|—|SKIP
+営|エイ|いとな(む)|manage; run
+績|セキ|—|achievements
+条|ジョウ|—|article; clause
+件|ケン|—|matter; case
+income|—|—|SKIP
+状態|—|—|SKIP
+態|タイ|—|attitude; condition
+勢|セイ|いきお(い)|force; momentum
+統|トウ|す(べる)|unify
+領|リョウ|—|territory;領収書 receipt
+導|ドウ|みちび(く)|to guide
+職|ショク|—|employment; post
+именно|—|—|SKIP
+革|カク|かわ|leather; reform
+策|サク|—|policy; plan
+募|ボ|つの(る)|recruit
+採|サイ|と(る)|adopt; hire
+提|テイ|さ(げる)|propose; carry
+供給|—|—|SKIP
+給|キュウ|—|salary; supply
+与|ヨ|あた(える)|to give; bestow
+担|タン|かつ(ぐ)|carry; bear (role)
+績優|—|—|SKIP
+就|シュウ|つ(く)|take up (a post)
+雇|コ|やと(う)|to employ
+契|ケイ|—|contract (契約)
+署|ショ|—|government office; signature
+籍|セキ|—|register (国籍 nationality)
+projected|—|—|SKIP
+証|ショウ|—|proof; certificate
+請|セイ|—|request (申請 application)
+許|キョ|ゆる(す)|permit; forgive
+可|カ|—|possible; approval
+罰|バツ|—|punishment
+則|ソク|—|rule
+規|キ|—|standard; regulation
+律|リツ|—|law; rhythm
+評|ヒョウ|—|evaluation
+価|カ|あたい|value; price
+income2|—|—|SKIP
+income3|—|—|SKIP
+income4|—|—|SKIP
+効|コウ|き(く)|effect
+率|リツ|—|rate; efficiency
+績務|—|—|SKIP
+慣|カン|な(れる)|get used to
+環|カン|—|environment (環境)
+境|キョウ|さかい|boundary
+превы|—|—|SKIP
+превы2|—|—|SKIP
+превы3|—|—|SKIP
+превы4|—|—|SKIP
+превы5|—|—|SKIP
+превы6|—|—|SKIP
+превы7|—|—|SKIP
+превы8|—|—|SKIP`;
+const KANJI1_RAW=`曖|アイ|—|dim; unclear (曖昧 ambiguous)
+昧|マイ|—|dark; foolish
+措|ソ|—|measure (措置)
+匿|トク|—|conceal (匿名 anonymous)
+把|ハ|—|grasp (把握)
+握|アク|にぎ(る)|to grip
+餅|ヘイ|もち|rice cake
+premium|—|—|SKIP
+premium2|—|—|SKIP
+premium3|—|—|SKIP
+premium4|—|—|SKIP
+premium5|—|—|SKIP
+premium6|—|—|SKIP
+premium7|—|—|SKIP
+premium8|—|—|SKIP
+premium9|—|—|SKIP
+premium10|—|—|SKIP`;
+const parseK=raw=>raw.trim().split("\n").map(l=>l.split("|")).filter(a=>a.length===4&&a[0].length===1&&a[3]!=="SKIP");
+const KANJI3=parseK(KANJI3_RAW),KANJI2=parseK(KANJI2_RAW),KANJI1=parseK(KANJI1_RAW);
+const V3_RAW=`経験|けいけん|experience|n3
+情報|じょうほう|information|n3
+関係|かんけい|relationship|n3
+準備|じゅんび|preparation|n3
+説明|せつめい|explanation|n3
+連絡|れんらく|contact|n3
+相談|そうだん|consultation|n3
+確認|かくにん|confirmation|n3
+影響|えいきょう|influence|n3
+状況|じょうきょう|situation|n3
+必要|ひつよう|necessary|n3
+無理|むり|impossible|n3
+残業|ざんぎょう|overtime work|n3
+給料|きゅうりょう|salary|n3
+面接|めんせつ|interview|n3
+履歴書|りれきしょ|resume/CV|n3
+遅刻|ちこく|being late|n3
+出張|しゅっちょう|business trip|n3
+報告|ほうこく|report|n3
+予定|よてい|plan; schedule|n3
+約束|やくそく|promise|n3
+用意|ようい|preparation|n3
+規則|きそく|rules|n3
+安全|あんぜん|safety|n3
+危険|きけん|danger|n3
+注意|ちゅうい|caution|n3
+故障|こしょう|breakdown|n3
+修理|しゅうり|repair|n3
+募集|ぼしゅう|recruitment|n3
+経済|けいざい|economy|n3
+政治|せいじ|politics|n3
+社会|しゃかい|society|n3
+文化|ぶんか|culture|n3
+国際|こくさい|international|n3
+最近|さいきん|recently|n3
+将来|しょうらい|future|n3
+昔|むかし|long ago|n3
+途中|とちゅう|on the way|n3
+具合|ぐあい|condition|n3
+気分|きぶん|mood|n3`;
+const V2_RAW=`契約|けいやく|contract|n2
+申請|しんせい|application|n2
+許可|きょか|permission|n2
+雇用|こよう|employment|n2
+条件|じょうけん|conditions|n2
+効率|こうりつ|efficiency|n2
+評価|ひょうか|evaluation|n2
+対応|たいおう|handling; response|n2
+納期|のうき|deadline (delivery)|n2
+提案|ていあん|proposal|n2
+検討|けんとう|consideration|n2
+担当|たんとう|in charge of|n2
+承知|しょうち|acknowledgement|n2
+恐縮|きょうしゅく|feeling obliged|n2
+お世話|おせわ|care; assistance|n2
+取引|とりひき|business deal|n2
+在留資格|ざいりゅうしかく|residence status|n2
+更新|こうしん|renewal; update|n2
+保険|ほけん|insurance|n2
+税金|ぜいきん|tax|n2
+環境|かんきょう|environment|n2
+状態|じょうたい|state; condition|n2
+統計|とうけい|statistics|n2
+傾向|けいこう|tendency|n2
+課題|かだい|task; issue|n2
+解決|かいけつ|solution|n2
+改善|かいぜん|improvement (kaizen)|n2
+品質|ひんしつ|quality|n2
+製造|せいぞう|manufacturing|n2
+設備|せつび|equipment|n2`;
+const V1_RAW=`曖昧|あいまい|ambiguous|n1
+把握|はあく|grasp; understanding|n1
+措置|そち|measure; step|n1
+匿名|とくめい|anonymity|n1
+顕著|けんちょ|remarkable|n1
+迅速|じんそく|rapid|n1
+円滑|えんかつ|smooth (proceedings)|n1
+妥協|だきょう|compromise|n1
+交渉|こうしょう|negotiation|n1
+是非|ぜひ|by all means; pros and cons|n1
+懸念|けねん|concern|n1
+配慮|はいりょ|consideration|n1
+貢献|こうけん|contribution|n1
+遂行|すいこう|execution (of duties)|n1
+徹底|てってい|thoroughness|n1
+拝見|はいけん|humbly see (keigo)|n1
+承る|うけたまわる|humbly receive/hear (keigo)|n1
+致します|いたします|humbly do (keigo)|n1
+伺う|うかがう|humbly ask/visit (keigo)|n1
+申し上げる|もうしあげる|humbly say (keigo)|n1`;
+const parseV=raw=>raw.trim().split("\n").map(l=>l.split("|")).filter(a=>a.length===4);
+const VOCAB3=parseV(V3_RAW),VOCAB2=parseV(V2_RAW),VOCAB1=parseV(V1_RAW);
+const GRAMMAR3=[
+["〜ばかりでなく","'not only ~ but also'.","彼は英語ばかりでなく、日本語も話せます。","Kare wa eigo bakari de naku, nihongo mo hanasemasu. — He speaks not only English but also Japanese."],
+["〜わけだ","'that means; no wonder'.","十年日本にいるから、上手なわけだ。","Jūnen Nihon ni iru kara, jōzu na wake da. — He's been in Japan 10 years — no wonder he's good."],
+["〜はずがない","'cannot possibly be'.","彼が嘘をつくはずがない。","Kare ga uso o tsuku hazu ga nai. — He can't possibly be lying."],
+["〜おかげで","'thanks to ~'.","先生のおかげで合格しました。","Sensei no okage de gōkaku shimashita. — Thanks to my teacher, I passed."],
+["〜せいで","'because of ~ (negative)'.","渋滞のせいで遅刻しました。","Jūtai no sei de chikoku shimashita. — I was late because of traffic."],
+["〜ば〜ほど","'the more ~ the more'.","練習すればするほど上手になります。","Renshū sureba suru hodo jōzu ni narimasu. — The more you practice, the better you get."],
+["〜として","'as; in the role of'.","エンジニアとして働いています。","Enjinia to shite hataraite imasu. — I work as an engineer."],
+["〜について","'about; concerning'.","日本の文化について勉強しています。","Nihon no bunka ni tsuite benkyō shite imasu. — I'm studying about Japanese culture."],
+["〜によって","'by means of; depending on'.","人によって考え方が違います。","Hito ni yotte kangaekata ga chigaimasu. — Ways of thinking differ by person."],
+["〜に対して","'toward; in contrast to'.","お客様に対して丁寧に話します。","O-kyakusama ni taishite teinei ni hanashimasu. — We speak politely to customers."],
+["〜うちに","'while (still)'.","忘れないうちにメモします。","Wasurenai uchi ni memo shimasu. — I'll note it down before I forget."],
+["〜ことになっている","'it is a rule that'.","社員はカードで入ることになっています。","Shain wa kādo de hairu koto ni natte imasu. — Employees are supposed to enter with a card."],
+["〜ようとする","'try to; about to'.","出かけようとした時、雨が降り出した。","Dekakeyō to shita toki, ame ga furidashita. — Just as I was about to leave, it started raining."],
+["〜ながらも","'although; despite'.","狭いながらも楽しい我が家。","Semai nagara mo tanoshii wagaya. — Small though it is, it's a happy home."],
+["〜がち","'tend to ~'.","最近、疲れがちです。","Saikin, tsukaregachi desu. — Lately I tend to get tired."],
+["〜っぽい","'-ish; looks like'.","彼は忘れっぽいです。","Kare wa wasureppoi desu. — He's forgetful."],
+["〜に比べて","'compared to'.","去年に比べて売り上げが増えた。","Kyonen ni kurabete uriage ga fueta. — Sales increased compared to last year."],
+["〜はもちろん","'not to mention'.","漢字はもちろん、敬語も勉強します。","Kanji wa mochiron, keigo mo benkyō shimasu. — I study keigo, not to mention kanji."],
+["〜たびに","'every time ~'.","この歌を聞くたびに国を思い出す。","Kono uta o kiku tabi ni kuni o omoidasu. — Every time I hear this song, I remember home."],
+["〜ところに/ところへ","'just when ~'.","出かけるところに電話が来た。","Dekakeru tokoro ni denwa ga kita. — The phone rang just as I was leaving."]];
+const GRAMMAR2=[
+["〜に関して","'regarding' (formal について).","この件に関して、ご説明いたします。","Kono ken ni kanshite, go-setsumei itashimasu. — I will explain regarding this matter."],
+["〜をめぐって","'concerning; over (dispute)'.","新しい規則をめぐって議論が続いている。","Atarashii kisoku o megutte giron ga tsuzuite iru. — Debate continues over the new rules."],
+["〜ざるを得ない","'have no choice but to'.","上司の指示なら、従わざるを得ない。","Jōshi no shiji nara, shitagawazaru o enai. — If it's the boss's order, I can't help but follow."],
+["〜かねない","'might (do something bad)'.","無理をすると病気になりかねない。","Muri o suru to byōki ni narikanenai. — If you overdo it, you could get sick."],
+["〜かねる","'cannot (politely)'.","その質問にはお答えしかねます。","Sono shitsumon ni wa o-kotae shikanemasu. — I'm afraid I cannot answer that."],
+["〜ものの","'although'.","資格を取ったものの、まだ不安だ。","Shikaku o totta mono no, mada fuan da. — Although I got the license, I'm still anxious."],
+["〜にもかかわらず","'despite'.","雨にもかかわらず、大勢来た。","Ame ni mo kakawarazu, ōzei kita. — Despite the rain, many came."],
+["〜つつある","'in the process of'.","日本の職場は変わりつつある。","Nihon no shokuba wa kawaritsutsu aru. — Japanese workplaces are changing."],
+["〜一方だ","'keeps on ~ing (one direction)'.","物価は上がる一方だ。","Bukka wa agaru ippō da. — Prices just keep rising."],
+["〜次第","'as soon as; depending on'.","結果が分かり次第、ご連絡します。","Kekka ga wakari shidai, go-renraku shimasu. — I'll contact you as soon as results are known."],
+["〜に応じて","'according to'.","経験に応じて給料が決まります。","Keiken ni ōjite kyūryō ga kimarimasu. — Salary is set according to experience."],
+["〜わけにはいかない","'can't afford to'.","大事な会議だから、休むわけにはいかない。","Daiji na kaigi da kara, yasumu wake ni wa ikanai. — It's an important meeting, so I can't skip it."],
+["〜得る/得ない","'can possibly / cannot'.","それはあり得ることだ。","Sore wa arieru koto da. — That is possible."],
+["〜べきだ","'should (obligation)'.","早めに申請するべきだ。","Hayame ni shinsei suru beki da. — You should apply early."],
+["〜に違いない","'must certainly be'.","彼は合格するに違いない。","Kare wa gōkaku suru ni chigainai. — He will surely pass."]];
+const GRAMMAR1=[
+["〜んばかりに","'as if about to'.","泣かんばかりに頼まれた。","Nakan bakari ni tanomareta. — I was begged almost tearfully."],
+["〜が早いか","'as soon as' (literary).","ベルが鳴るが早いか、教室を出た。","Beru ga naru ga hayai ka, kyōshitsu o deta. — The moment the bell rang, they left."],
+["〜そばから","'as soon as (repeatedly)'.","覚えるそばから忘れてしまう。","Oboeru soba kara wasurete shimau. — I forget as fast as I memorize."],
+["〜はおろか","'let alone'.","漢字はおろか、ひらがなも読めない。","Kanji wa oroka, hiragana mo yomenai. — He can't read hiragana, let alone kanji."],
+["〜ときたら","'when it comes to (criticism)'.","うちの上司ときたら、話が長い。","Uchi no jōshi to kitara, hanashi ga nagai. — My boss — honestly — talks forever."],
+["〜であれ","'no matter; even if'.","どんな仕事であれ、全力でやる。","Donna shigoto de are, zenryoku de yaru. — Whatever the job, I give my all."],
+["〜を余儀なくされる","'be forced to'.","計画の変更を余儀なくされた。","Keikaku no henkō o yoginaku sareta. — We were forced to change plans."],
+["〜に堪えない","'cannot bear to; deeply'.","感謝に堪えません。","Kansha ni taemasen. — I am deeply grateful."],
+["〜ならでは","'unique to'.","日本ならではの文化を体験した。","Nihon narade wa no bunka o taiken shita. — I experienced culture unique to Japan."],
+["〜べく","'in order to' (literary).","N1に合格すべく、毎日勉強している。","N1 ni gōkaku subeku, mainichi benkyō shite iru. — I study daily so as to pass N1."]];
 const HIRA=[["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],["や","ya"],["ゆ","yu"],["よ","yo"],["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],["わ","wa"],["を","wo"],["ん","n"]];
 const KATA=[["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],["ヤ","ya"],["ユ","yu"],["ヨ","yo"],["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],["ワ","wa"],["ヲ","wo"],["ン","n"]];
 const SPEAK_SENTS=[
