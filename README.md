@@ -22,10 +22,15 @@
 ## Roadmap
 
 1. ✅ Thesis proposal + N5/N4 reviewer web app (PWA) + study pack
-2. ⬜ N4 content wave (kanji 101–300, N4 grammar, JFT-Basic mocks)
-3. ⬜ Mobile app build (Flutter) with real SRS scheduler + offline packs
-4. ⬜ ASR pronunciation scoring; occupational modules (SSW caregiving/food service, IT/keigo)
-5. ⬜ Pilot evaluation per Chapter 3 (ISO 25010 + quasi-experiment)
+2. ✅ N4 content wave (163 N4 kanji, 40 N4 grammar points, JFT-Basic style mock exam)
+3. ✅ Web deployment path: PWA (installable on iPhone via Safari → Add to Home Screen), GitHub Pages hosting
+4. ⬜ N4 vocabulary wave (~300 words) + occupational modules (SSW caregiving/food service, IT/keigo)
+5. ⬜ ASR pronunciation scoring beyond browser speech recognition
+6. ⬜ Pilot evaluation per Chapter 3 (ISO 25010 + quasi-experiment)
+
+## Deployment
+
+Hosted on GitHub Pages from `main` branch root. On iPhone: open the site in Safari → Share → **Add to Home Screen** → launches full-screen and works offline (service worker).
 
 ## Git
 
