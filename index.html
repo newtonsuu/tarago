@@ -10,9 +10,22 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1220">
 <style>
-:root{--bg:#0f1220;--card:#1a1f35;--card2:#232a4a;--acc:#ff5c7a;--acc2:#4dd0e1;--gold:#ffd166;--txt:#eef0ff;--mut:#9aa3c7;--ok:#5ad38a;}
+:root{--bg:#0f1220;--card:#1a1f35;--card2:#232a4a;--acc:#ff5c7a;--acc2:#4dd0e1;--gold:#ffd166;--txt:#eef0ff;--mut:#9aa3c7;--ok:#5ad38a;--spring:cubic-bezier(.34,1.56,.64,1);}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;
+  background:radial-gradient(1100px 500px at 85% -10%, #2a1836 0%, transparent 60%),
+             radial-gradient(900px 500px at -10% 30%, #12304a 0%, transparent 55%),
+             var(--bg);background-attachment:fixed}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #4dd0e155}50%{box-shadow:0 0 0 12px #4dd0e100}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.15) rotate(3deg)}}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.panel.show{animation:fadeUp .35s var(--spring)}
+.card{animation:fadeUp .35s var(--spring)}
+button{transition:transform .15s var(--spring),filter .15s}
+button:active{transform:scale(.94)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 header{padding:18px 20px 8px;text-align:center}
 header h1{font-size:1.5rem}
 header h1 span{color:var(--acc)}
@@ -53,8 +66,17 @@ canvas{background:#fff;border-radius:12px;touch-action:none;display:block;margin
 progress{width:100%;height:10px}
 .notice{font-size:.8rem;color:var(--mut);margin-top:8px;text-align:center}
 /* ---- Learn path ---- */
-#statbar{display:flex;gap:14px;justify-content:center;align-items:center;padding:6px;font-size:.95rem}
-#statbar span{background:var(--card);border:1px solid #2e3765;border-radius:12px;padding:4px 12px}
+#statbar{display:flex;gap:14px;justify-content:center;align-items:center;padding:6px;font-size:.95rem;position:sticky;top:0;z-index:20}
+#statbar span{background:#1a1f35cc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #2e3765aa;border-radius:12px;padding:4px 12px}
+#statbar span:first-child{animation:flame 2.4s ease-in-out infinite;display:inline-block}
+.nodeWrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.nodeWrap:nth-child(odd){transform:translateX(-60px)}
+.nodeWrap:nth-child(even){transform:translateX(60px)}
+.uTheme{font-size:.68rem;color:var(--mut);max-width:130px;text-align:center;line-height:1.25}
+.node:hover:not(.lock){transform:translateY(-4px) scale(1.06);filter:brightness(1.15)}
+.node{transition:transform .2s var(--spring),filter .2s}
+.node.open{animation:pulse 2s infinite}
+.node.done .ico{animation:popIn .4s var(--spring)}
 .lvlHead{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
 .lvlHead h2{font-size:1.1rem;color:var(--gold)}
 .lvlHead .bar{flex:1;height:8px;background:var(--card);border-radius:6px;overflow:hidden}
@@ -66,8 +88,6 @@ progress{width:100%;height:10px}
 .node.open{background:var(--card2);border:3px solid var(--acc2);box-shadow:0 0 18px #4dd0e155}
 .node.lock{opacity:.45;cursor:not-allowed}
 .node .ring{position:absolute;inset:-8px;border-radius:50%;pointer-events:none}
-.node:nth-child(odd){transform:translateX(-60px)}
-.node:nth-child(even){transform:translateX(60px)}
 /* ---- lesson ---- */
 .lessonTop{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .lessonTop .bar{flex:1;height:14px;background:var(--card);border-radius:8px;overflow:hidden}
@@ -645,6 +665,120 @@ const GRAMMAR4=[
 ["Question word + か","Embedded question.","何時に始まるか、教えてください。","Nanji ni hajimaru ka, oshiete kudasai. — Please tell me what time it starts."],
 ["〜ていただけませんか","Very polite request (keigo).","もう少しゆっくり話していただけませんか。","Mō sukoshi yukkuri hanashite itadakemasen ka. — Could you kindly speak a bit more slowly?"],
 ["お〜になる / お〜する","Honorific / humble verb forms.","部長はもうお帰りになりました。","Buchō wa mō o-kaeri ni narimashita. — The manager has already gone home. (honorific)"]];
+// ---- N4 vocabulary wave (Genki 13-23 themes) ----
+const V4_RAW=`気分|きぶん|feeling; mood|feelings
+気持ち|きもち|feeling; sensation|feelings
+嬉しい|うれしい|happy; glad|feelings
+悲しい|かなしい|sad|feelings
+寂しい|さびしい|lonely|feelings
+恥ずかしい|はずかしい|embarrassed|feelings
+怖い|こわい|scary; afraid|feelings
+心配|しんぱい|worry|feelings
+安心|あんしん|relief|feelings
+びっくりする|びっくりする|to be surprised|feelings
+緊張する|きんちょうする|to be nervous|feelings
+興味|きょうみ|interest|feelings
+アルバイト|あるばいと|part-time job|work
+社長|しゃちょう|company president|work
+部長|ぶちょう|department manager|work
+課長|かちょう|section chief|work
+先輩|せんぱい|senior colleague|work
+後輩|こうはい|junior colleague|work
+同僚|どうりょう|coworker|work
+名刺|めいし|business card|work
+会議室|かいぎしつ|meeting room|work
+書類|しょるい|documents|work
+資料|しりょう|materials; data|work
+工場|こうじょう|factory|work
+機械|きかい|machine|work
+道具|どうぐ|tool|work
+説明書|せつめいしょ|manual; instructions|work
+休憩|きゅうけい|break; rest|work
+給料日|きゅうりょうび|payday|work
+研修|けんしゅう|training|work
+経験する|けいけんする|to experience|work
+頑張る|がんばる|to do one's best|work
+旅行|りょこう|travel|travel
+観光|かんこう|sightseeing|travel
+温泉|おんせん|hot spring|travel
+神社|じんじゃ|shrine|travel
+お寺|おてら|temple|travel
+お土産|おみやげ|souvenir|travel
+予約|よやく|reservation|travel
+出発|しゅっぱつ|departure|travel
+到着|とうちゃく|arrival|travel
+乗り換える|のりかえる|to transfer (trains)|travel
+急行|きゅうこう|express train|travel
+特急|とっきゅう|limited express|travel
+新幹線|しんかんせん|bullet train|travel
+地下鉄|ちかてつ|subway|travel
+片道|かたみち|one way|travel
+往復|おうふく|round trip|travel
+熱|ねつ|fever|health
+風邪|かぜ|a cold|health
+頭痛|ずつう|headache|health
+歯医者|はいしゃ|dentist|health
+怪我|けが|injury|health
+入院する|にゅういんする|to be hospitalized|health
+退院する|たいいんする|to leave hospital|health
+具合が悪い|ぐあいがわるい|to feel unwell|health
+診察|しんさつ|medical examination|health
+保険証|ほけんしょう|insurance card|health
+お見舞い|おみまい|visiting the sick|health
+運動する|うんどうする|to exercise|health
+気をつける|きをつける|to be careful|health
+習慣|しゅうかん|habit; custom|daily
+生活|せいかつ|daily life|daily
+引っ越す|ひっこす|to move (house)|daily
+片付ける|かたづける|to tidy up|daily
+捨てる|すてる|to throw away|daily
+拾う|ひろう|to pick up|daily
+探す|さがす|to look for|daily
+見つける|みつける|to find|daily
+落とす|おとす|to drop; lose|daily
+忘れ物|わすれもの|lost item|daily
+届ける|とどける|to deliver; report|daily
+迎える|むかえる|to welcome; pick up|daily
+送る|おくる|to send; see off|daily
+招待する|しょうたいする|to invite|daily
+約束する|やくそくする|to promise|daily
+遅れる|おくれる|to be late|daily
+間に合う|まにあう|to be on time|daily
+急ぐ|いそぐ|to hurry|daily
+決める|きめる|to decide|daily
+続ける|つづける|to continue|daily
+始める|はじめる|to start|daily
+やめる|やめる|to quit|daily
+変える|かえる|to change|daily
+直す|なおす|to fix; repair|daily
+壊れる|こわれる|to break (intrans.)|daily
+汚れる|よごれる|to get dirty|daily
+洗濯する|せんたくする|to do laundry|daily
+掃除する|そうじする|to clean|daily
+料理する|りょうりする|to cook|daily
+最初|さいしょ|the first; beginning|time
+最後|さいご|the last; end|time
+この間|このあいだ|the other day|time
+この頃|このごろ|these days|time
+将来|しょうらい|future|time
+昔|むかし|old days|time
+先日|せんじつ|the other day (formal)|time
+今度|こんど|next time; this time|time
+そろそろ|そろそろ|it's about time|time
+だんだん|だんだん|gradually|time
+やっと|やっと|finally; at last|time
+急に|きゅうに|suddenly|time
+必ず|かならず|certainly; without fail|time
+絶対に|ぜったいに|absolutely|time
+特に|とくに|especially|time
+例えば|たとえば|for example|time
+多分|たぶん|probably|time
+もちろん|もちろん|of course|time
+確かに|たしかに|certainly; indeed|time
+なるほど|なるほど|I see!|time`;
+const VOCAB4=parseVRaw(V4_RAW);
+function parseVRaw(raw){return raw.trim().split("\n").map(l=>l.split("|")).filter(a=>a.length===4)}
+
 // ---- N3/N2/N1 starter waves (expandable) ----
 const KANJI3_RAW=`政|セイ|まつりごと|politics
 議|ギ|—|deliberation
@@ -1159,11 +1293,19 @@ tabs.forEach(([id,label])=>{
 /* ================= LEARN PATH (Duolingo-style) ================= */
 const LEVELS=[
  {id:"N5",name:"N5 — Foundations",kanji:KANJI,vocab:VOCAB,gram:GRAMMAR,goal:"Survival Japanese · base for everything"},
- {id:"N4",name:"N4 — SSW Gate 🎯",kanji:KANJI4,vocab:VOCAB,gram:GRAMMAR4,goal:"JLPT N4 / JFT-Basic = SSW visa language requirement"},
+ {id:"N4",name:"N4 — SSW Gate 🎯",kanji:KANJI4,vocab:VOCAB4,gram:GRAMMAR4,goal:"JLPT N4 / JFT-Basic = SSW visa language requirement"},
  {id:"N3",name:"N3 — Workplace Bridge",kanji:KANJI3,vocab:VOCAB3,gram:GRAMMAR3,goal:"Everyday workplace fluency"},
  {id:"N2",name:"N2 — Engineer Gate 🎯",kanji:KANJI2,vocab:VOCAB2,gram:GRAMMAR2,goal:"Business Japanese · typical IT/engineer hiring bar"},
  {id:"N1",name:"N1 — Mastery",kanji:KANJI1,vocab:VOCAB1,gram:GRAMMAR1,goal:"Near-native · keigo mastery"}];
 const UNIT_ICONS=["⛩️","🍙","🗻","🌸","🏮","🚅","🎌","🏯","🍜","🎋"];
+// Genki-inspired chapter themes (Genki L1-23 topic arc) applied to units in order
+const THEMES={
+ N5:["Greetings & Introductions","これ・それ: Things & Shopping","Daily Routine Verbs","Existence: ある・いる","Likes, Dislikes & Adjectives","Invitations & Weekends","Family & Description","Te-form Toolbox","Permission & Rules","Past Stories","Counting & Money","Places in Town","Time & Schedules","Weather & Seasons"],
+ N4:["Casual (Plain) Speech","Feelings & Emotions","Workplace & Senpai Culture","Giving & Receiving","Travel & Transit","Health & the Clinic","Conditionals: たら・ば・と","Experience: 〜たことがある","Preparation: 〜ておく・〜てみる","Potential & Ability","Obligation: なければ","Hearsay & Appearance","Passive & Causative","Keigo Starter","Daily Life Verbs II","Time Expressions II","Invitations II","Describing Change","Advice & Suggestions","Reasons: ので・し","Review & Bridge to N3"],
+ N3:["Workplace Communication","Cause & Effect","Formal vs Casual Register","Comparisons & Trends","Rules at Work","Opinions & Reports","Nuance: がち・っぽい","Bridge to Business"],
+ N2:["Business Correspondence","Contracts & Applications","Formal Grammar I","Formal Grammar II","Kaizen & Manufacturing"],
+ N1:["Advanced Nuance","Literary Patterns","Keigo Mastery"]};
+function unitTheme(lvl,i){return (THEMES[lvl]&&THEMES[lvl][i])||"Wave "+(i+1)}
 function buildUnits(lv){
   const nk=Math.ceil(lv.kanji.length/8),nv=Math.ceil(lv.vocab.length/12),ng=Math.ceil(lv.gram.length/4);
   const n=Math.max(nk,nv,ng);
@@ -1209,9 +1351,10 @@ function renderPath(){
       const globalFirst=lv.id==="N5"||ALL_UNITS.filter(x=>x.lvl===lv.id)[0]!==u||true;
       const state=p>=LESSONS_PER_UNIT?"done":prevDone?"open":"lock";
       const ring=state==="open"?`<div class="ring" style="background:conic-gradient(var(--acc2) ${p/LESSONS_PER_UNIT*360}deg,transparent 0);mask:radial-gradient(closest-side,transparent 84%,black 85%);-webkit-mask:radial-gradient(closest-side,transparent 84%,black 85%)"></div>`:"";
-      html+=`<button class="node ${state}" ${state!=="lock"?`onclick="startLesson('${u.id}')"`:""}>
+      html+=`<div class="nodeWrap"><button class="node ${state}" title="${unitTheme(lv.id,i)}" ${state!=="lock"?`onclick="startLesson('${u.id}')"`:""}>
         ${ring}<span class="ico">${state==="done"?"👑":state==="lock"?"🔒":UNIT_ICONS[i%UNIT_ICONS.length]}</span>
-        <span>Unit ${i+1}</span></button>`;
+        <span>Unit ${i+1}</span></button>
+        <span class="uTheme">${unitTheme(lv.id,i)}</span></div>`;
     });
     html+="</div>";
   });
@@ -1239,7 +1382,8 @@ function startLesson(uid){
 function lessonBar(){
   const total=L.ex.length+L.wrong.length;
   return `<div class="lessonTop"><button class="pill" onclick="renderPath()">✕</button>
-    <div class="bar"><i style="width:${Math.round(100*L.i/total)}%"></i></div><span class="muted">⚡${L.xp}</span></div>`;
+    <div class="bar"><i style="width:${Math.round(100*L.i/total)}%"></i></div><span class="muted">⚡${L.xp}</span></div>
+    <p class="center muted" style="font-size:.8rem;margin-bottom:8px">${L.u.lvl} · ${unitTheme(L.u.lvl,L.u.idx)}</p>`;
 }
 function lessonQ(){
   const el=document.getElementById("p-learn");
@@ -1336,7 +1480,17 @@ function orderCheck(){
   setTimeout(()=>{L.i++;lessonQ()},ok?700:1400);
   if(!ok)el.insertAdjacentHTML("afterend",`<p class="center" style="color:var(--acc)">Answer: ${L.orderTarget}</p>`);
 }
+function confetti(){
+  const em=["🎉","🌸","⭐","🎊","🇯🇵","🇵🇭","✨"];
+  for(let i=0;i<26;i++){
+    const s=document.createElement("div");
+    s.textContent=em[i%em.length];
+    s.style.cssText=`position:fixed;top:-40px;left:${Math.random()*100}vw;font-size:${16+Math.random()*20}px;z-index:99;pointer-events:none;animation:confettiFall ${1.6+Math.random()*1.6}s ${Math.random()*.5}s ease-in forwards`;
+    document.body.appendChild(s);setTimeout(()=>s.remove(),4000);
+  }
+}
 function lessonDone(){
+  confetti();
   const u=L.u;
   store.units=store.units||{};
   store.units[u.id]=Math.min((store.units[u.id]||0)+1,LESSONS_PER_UNIT);
@@ -1474,16 +1628,22 @@ function filtK(s){
   document.getElementById("kOut").innerHTML=tableHTML(rows,["Kanji","On’yomi","Kun’yomi","Meaning",""]);
 }
 filtK("");
-const cats=[...new Set(VOCAB.map(v=>v[3]))];
-document.getElementById("p-vocab").innerHTML=
-  `<div class="btnrow" id="catRow">${["all",...cats].map(c=>`<button class="pill ${c==="all"?"active":""}" onclick="filtV('${c}',this)">${c}</button>`).join("")}</div><div id="vOut"></div>`;
+const VLEVELS={N5:VOCAB,N4:VOCAB4,N3:VOCAB3,N2:VOCAB2,N1:VOCAB1};
+let vLvl="N5";
+function vTabInit(){
+  const cats=[...new Set(VLEVELS[vLvl].map(v=>v[3]))];
+  document.getElementById("p-vocab").innerHTML=
+  `<div class="btnrow" id="lvlRow">${Object.keys(VLEVELS).map(l=>`<button class="pill ${l===vLvl?"active":""}" onclick="vLvl='${l}';vTabInit()">${l} (${VLEVELS[l].length})</button>`).join("")}</div>
+   <div class="btnrow" id="catRow">${["all",...cats].map(c=>`<button class="pill ${c==="all"?"active":""}" onclick="filtV('${c}',this)">${c}</button>`).join("")}</div><div id="vOut"></div>`;
+  filtV("all");
+}
 function filtV(c,btn){
   if(btn){document.querySelectorAll("#catRow .pill").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
-  const rows=VOCAB.filter(v=>c==="all"||v[3]===c)
+  const rows=VLEVELS[vLvl].filter(v=>c==="all"||v[3]===c)
     .map(v=>`<tr><td class="jp">${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td><td><button class="pill" onclick="speakJa('${v[0].replace(/'/g,"")}')">🔊</button></td></tr>`);
   document.getElementById("vOut").innerHTML=tableHTML(rows,["Word","Reading","Meaning",""]);
 }
-filtV("all");
+vTabInit();
 function gCard(g){return `<div class="card gpoint"><h3>${g[0]}</h3><p>${g[1]}</p><p class="ex">${g[2]} <button class="pill" onclick="speakJa('${g[2].replace(/'/g,"")}')">🔊</button></p><p class="tr">${g[3]}</p></div>`}
 document.getElementById("p-grammar").innerHTML=
   `<h3 style="margin:8px 0;color:var(--gold)">N5 Grammar (${GRAMMAR.length})</h3>`+GRAMMAR.map(gCard).join("")+
