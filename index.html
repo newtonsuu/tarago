@@ -8,17 +8,17 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f1220">
+<meta name="theme-color" content="#fdf8f6">
 <style>
-:root{--bg:#0f1220;--card:#1a1f35;--card2:#232a4a;--acc:#ff5c7a;--acc2:#4dd0e1;--gold:#ffd166;--txt:#eef0ff;--mut:#9aa3c7;--ok:#5ad38a;--spring:cubic-bezier(.34,1.56,.64,1);}
+:root{--bg:#fdf8f6;--card:#ffffff;--card2:#fbeef0;--acc:#e35d75;--acc2:#2ea8b5;--gold:#c9950c;--txt:#2b2330;--mut:#8a7f8d;--ok:#3aa06a;--spring:cubic-bezier(.34,1.56,.64,1);}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;
-  background:radial-gradient(1100px 500px at 85% -10%, #2a1836 0%, transparent 60%),
-             radial-gradient(900px 500px at -10% 30%, #12304a 0%, transparent 55%),
+  background:radial-gradient(1100px 500px at 85% -10%, #fde3ea 0%, transparent 60%),
+             radial-gradient(900px 500px at -10% 30%, #e3f2f4 0%, transparent 55%),
              var(--bg);background-attachment:fixed}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes popIn{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #4dd0e155}50%{box-shadow:0 0 0 12px #4dd0e100}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #2ea8b533}50%{box-shadow:0 0 0 12px #2ea8b500}}
 @keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.15) rotate(3deg)}}
 @keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
 .panel.show{animation:fadeUp .35s var(--spring)}
@@ -31,27 +31,27 @@ header h1{font-size:1.5rem}
 header h1 span{color:var(--acc)}
 header p{color:var(--mut);font-size:.85rem;margin-top:4px}
 nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px}
-nav button{background:var(--card);color:var(--txt);border:1px solid #2e3765;border-radius:20px;padding:8px 14px;cursor:pointer;font-size:.9rem}
+nav button{background:var(--card);color:var(--txt);border:1px solid #f0d4da;border-radius:20px;padding:8px 14px;cursor:pointer;font-size:.9rem}
 nav button.active{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
 main{max-width:860px;margin:0 auto;padding:10px 16px 60px}
 .panel{display:none}.panel.show{display:block}
-.card{background:var(--card);border:1px solid #2e3765;border-radius:14px;padding:18px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid #f0d4da;border-radius:14px;padding:18px;margin-bottom:14px}
 .big{font-size:4.5rem;text-align:center;line-height:1.2;font-family:'Yu Gothic','Meiryo','Hiragino Sans',sans-serif}
 .mid{font-size:1.6rem;text-align:center;font-family:'Yu Gothic','Meiryo',sans-serif}
 .muted{color:var(--mut)} .center{text-align:center}
 .btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-button.b{background:var(--card2);color:var(--txt);border:1px solid #3a4478;border-radius:10px;padding:10px 18px;cursor:pointer;font-size:.95rem}
+button.b{background:var(--card2);color:var(--txt);border:1px solid #e6c3cb;border-radius:10px;padding:10px 18px;cursor:pointer;font-size:.95rem}
 button.b:hover{border-color:var(--acc2)}
-button.good{background:#1d4030;border-color:var(--ok)} button.again{background:#46202c;border-color:var(--acc)}
+button.good{background:#e2f5e9;border-color:var(--ok)} button.again{background:#fde3e3;border-color:var(--acc)}
 .stat{display:flex;gap:14px;justify-content:center;color:var(--mut);font-size:.85rem;margin:8px 0}
 table{width:100%;border-collapse:collapse;font-size:.95rem}
-th,td{padding:7px 9px;border-bottom:1px solid #2e3765;text-align:left;vertical-align:top}
+th,td{padding:7px 9px;border-bottom:1px solid #f0d4da;text-align:left;vertical-align:top}
 th{color:var(--acc2);position:sticky;top:0;background:var(--card)}
 td.jp{font-family:'Yu Gothic','Meiryo',sans-serif;font-size:1.15rem}
 .tag{display:inline-block;background:var(--card2);border-radius:8px;padding:1px 8px;font-size:.75rem;color:var(--gold);margin-left:6px}
-input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid #3a4478;background:var(--card2);color:var(--txt);font-size:1rem}
-.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3a4478;background:var(--card2);color:var(--txt);cursor:pointer;font-size:1rem}
-.opt.correct{background:#1d4030;border-color:var(--ok)} .opt.wrong{background:#46202c;border-color:var(--acc)}
+input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid #e6c3cb;background:var(--card2);color:var(--txt);font-size:1rem}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #e6c3cb;background:var(--card2);color:var(--txt);cursor:pointer;font-size:1rem}
+.opt.correct{background:#e2f5e9;border-color:var(--ok)} .opt.wrong{background:#fde3e3;border-color:var(--acc)}
 .gpoint h3{color:var(--acc2);margin-bottom:4px;font-size:1.05rem}
 .gpoint .ex{font-family:'Yu Gothic','Meiryo',sans-serif;margin-top:6px}
 .gpoint .tr{color:var(--mut);font-size:.88rem}
@@ -60,14 +60,14 @@ canvas{background:#fff;border-radius:12px;touch-action:none;display:block;margin
 .kanaCell{background:var(--card2);border-radius:10px;padding:8px 4px;text-align:center}
 .kanaCell .k{font-size:1.4rem;font-family:'Yu Gothic',sans-serif}
 .kanaCell .r{font-size:.7rem;color:var(--mut)}
-.pill{background:var(--card2);border:1px solid #3a4478;border-radius:10px;padding:6px 10px;color:var(--txt);cursor:pointer;font-size:.85rem}
-.pill.active{background:var(--acc2);color:#08222a;font-weight:600}
+.pill{background:var(--card2);border:1px solid #e6c3cb;border-radius:10px;padding:6px 10px;color:var(--txt);cursor:pointer;font-size:.85rem}
+.pill.active{background:var(--acc2);color:#ffffff;font-weight:600}
 .writeRef{font-size:7rem;text-align:center;color:#233;font-family:'Yu Gothic',sans-serif;line-height:1.1}
 progress{width:100%;height:10px}
 .notice{font-size:.8rem;color:var(--mut);margin-top:8px;text-align:center}
 /* ---- Learn path ---- */
 #statbar{display:flex;gap:14px;justify-content:center;align-items:center;padding:6px;font-size:.95rem;position:sticky;top:0;z-index:20}
-#statbar span{background:#1a1f35cc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #2e3765aa;border-radius:12px;padding:4px 12px}
+#statbar span{background:#ffffffcc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #f2ccd4aa;border-radius:12px;padding:4px 12px}
 #statbar span:first-child{animation:flame 2.4s ease-in-out infinite;display:inline-block}
 .nodeWrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .nodeWrap:nth-child(odd){transform:translateX(-60px)}
@@ -84,8 +84,8 @@ progress{width:100%;height:10px}
 .path{display:flex;flex-direction:column;align-items:center;gap:18px;padding:6px 0}
 .node{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;border:none;color:var(--txt);font-size:.72rem;background:var(--card2)}
 .node .ico{font-size:1.6rem}
-.node.done{background:#1d4030;border:3px solid var(--ok)}
-.node.open{background:var(--card2);border:3px solid var(--acc2);box-shadow:0 0 18px #4dd0e155}
+.node.done{background:#e2f5e9;border:3px solid var(--ok)}
+.node.open{background:var(--card2);border:3px solid var(--acc2);box-shadow:0 0 18px #2ea8b533}
 .node.lock{opacity:.45;cursor:not-allowed}
 .node .ring{position:absolute;inset:-8px;border-radius:50%;pointer-events:none}
 /* ---- lesson ---- */
@@ -93,15 +93,15 @@ progress{width:100%;height:10px}
 .lessonTop .bar{flex:1;height:14px;background:var(--card);border-radius:8px;overflow:hidden}
 .lessonTop .bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
 .bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
-.bank button{background:var(--card2);border:1px solid #3a4478;border-radius:10px;color:var(--txt);padding:8px 12px;cursor:pointer;font-size:1rem}
+.bank button{background:var(--card2);border:1px solid #e6c3cb;border-radius:10px;color:var(--txt);padding:8px 12px;cursor:pointer;font-size:1rem}
 .bank button.used{opacity:.25;pointer-events:none}
-.answerLine{min-height:46px;border-bottom:2px solid #3a4478;display:flex;flex-wrap:wrap;gap:8px;padding:6px;justify-content:center;margin:10px 0}
-.answerLine button{background:var(--acc2);color:#08222a;border:none;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:1rem}
+.answerLine{min-height:46px;border-bottom:2px solid #e6c3cb;display:flex;flex-wrap:wrap;gap:8px;padding:6px;justify-content:center;margin:10px 0}
+.answerLine button{background:var(--acc2);color:#ffffff;border:none;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:1rem}
 .pairCols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.pairCols button{padding:14px;border-radius:12px;border:1px solid #3a4478;background:var(--card2);color:var(--txt);cursor:pointer;font-size:1.05rem}
-.pairCols button.sel{border-color:var(--gold);background:#3a3418}
+.pairCols button{padding:14px;border-radius:12px;border:1px solid #e6c3cb;background:var(--card2);color:var(--txt);cursor:pointer;font-size:1.05rem}
+.pairCols button.sel{border-color:var(--gold);background:#fdf3d8}
 .pairCols button.done{opacity:.3;pointer-events:none}
-.pairCols button.err{border-color:var(--acc);background:#46202c}
+.pairCols button.err{border-color:var(--acc);background:#fde3e3}
 .xpPop{text-align:center;font-size:2rem;color:var(--gold);margin:20px 0}
 /* ---- AI ---- */
 .chat{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;padding:4px}
@@ -115,7 +115,7 @@ progress{width:100%;height:10px}
 <body>
 <header>
   <h1>Tara<span>GO</span> — JLPT N5 Reviewer</h1>
-  <p>Kanji • Vocabulary • Grammar • Speaking • Writing — evidence-based review for your road to Japan 🇵🇭→🇯🇵</p>
+  <p>🇵🇭→🇯🇵 N5–N1</p>
   <div id="statbar"></div>
 </header>
 <nav id="nav"></nav>
@@ -1358,7 +1358,7 @@ function renderPath(){
     });
     html+="</div>";
   });
-  html+=`<p class="notice">Each unit = 8 kanji · 12 vocab · 4 grammar patterns, taught through ${LESSONS_PER_UNIT} mixed-exercise lessons. Content grows in waves — N3–N1 units unlock as new waves ship.</p>`;
+  html+=`<p class="notice">Unit = 8 kanji · 12 vocab · 4 grammar. New waves ship regularly.</p>`;
   el.innerHTML=html;statbar();
 }
 /* ---- lesson engine ---- */
@@ -1514,7 +1514,7 @@ function renderAI(){
   const key=store.aiKey||"";
   el.innerHTML=`
   <div class="card">
-    <p class="muted" style="font-size:.85rem">AI Sensei uses Claude. Paste an Anthropic API key (console.anthropic.com → API keys). It's stored only on this device.</p>
+    <p class="muted" style="font-size:.85rem">Paste your Anthropic API key (stored on this device only).</p>
     <div class="chatIn"><input type="text" id="aiKey" placeholder="sk-ant-..." value="${key}"><button class="b" onclick="store.aiKey=document.getElementById('aiKey').value.trim();saveStore();renderAI()">Save</button></div>
   </div>
   <div class="btnrow">
@@ -1569,7 +1569,7 @@ function renderFlash(dueCount){
     <button class="pill ${fMode==="kanji4"?"active":""}" onclick="fMode='kanji4';fIdx=-1;renderFlash()">N4 Kanji (${KANJI4.length})</button>
     <button class="pill ${fMode==="vocab"?"active":""}" onclick="fMode='vocab';fIdx=-1;renderFlash()">Vocabulary (${VOCAB.length})</button>
   </div>
-  <div class="stat">${dueCount!==undefined?`Due now: ${dueCount}`:""}&nbsp; Spaced repetition: “Again” = see it soon · “Got it” = interval grows</div>
+  <div class="stat">${dueCount!==undefined?`Due now: ${dueCount}`:""}&nbsp; “Again” = soon · “Got it” = later</div>
   <div class="card" style="min-height:230px;cursor:pointer" onclick="fFlip=!fFlip;renderFlash()">
     <div class="big">${front}</div>
     ${fFlip?back:'<p class="center muted">tap card to flip</p>'}
@@ -1686,8 +1686,8 @@ function mockHome(){
   document.getElementById("p-mock").innerHTML=`
   <div class="card center">
     <h3 style="color:var(--acc2);margin-bottom:8px">JFT-Basic Style Mock Exam</h3>
-    <p class="muted">${MOCK.length} questions across 4 sections, modeled on the Japan Foundation Test for Basic Japanese (the SSW-visa alternative to JLPT N4). Listening items use audio — tap 🔊 as many times as you need.</p>
-    <p class="muted" style="margin-top:6px">Target: 80%+ ≈ JFT-Basic pass zone (250-scale, pass = 200).</p>
+    <p class="muted">${MOCK.length} questions · 4 sections · JFT-Basic format.</p>
+    <p class="muted" style="margin-top:6px">Pass zone: 80%+.</p>
     <div class="btnrow"><button class="b good" onclick="mockStart()">Start exam →</button></div>
   </div>`;
 }
@@ -1729,7 +1729,7 @@ function renderSpeak(){
   const s=SPEAK_SENTS[sIdx];
   document.getElementById("p-speak").innerHTML=`
   <div class="card">
-    <p class="center muted">Shadowing drill ${sIdx+1}/${SPEAK_SENTS.length} — Listen → repeat aloud 1s behind → then record yourself</p>
+    <p class="center muted">Drill ${sIdx+1}/${SPEAK_SENTS.length} · listen → shadow → record</p>
     <div class="mid" style="margin:14px 0">${s[0]}</div>
     <p class="center muted">${s[1]}</p>
     <p class="center" style="color:var(--gold);font-size:.9rem">${s[2]}</p>
@@ -1744,7 +1744,7 @@ function renderSpeak(){
       <button class="b" onclick="sIdx=(sIdx+1)%SPEAK_SENTS.length;renderSpeak()">Next →</button>
     </div>
   </div>
-  <p class="notice">Tip (Hamada, 2019): shadow the rhythm and pitch, not just the words. Do each sentence 5×.</p>`;
+  <p class="notice">Shadow rhythm and pitch, 5× each.</p>`;
 }
 renderSpeak();
 function speakJa(text,rate=1){
@@ -1778,10 +1778,10 @@ function initCanvas(){
     el.dataset.init="1";
     el.innerHTML=`
     <div class="card">
-      <p class="center muted">Handwriting practice — trace the gray kanji, then draw it from memory. Writing by hand builds stronger character memory than typing (Longcamp et al., 2005).</p>
+      <p class="center muted">Trace, then draw from memory.</p>
       <div style="position:relative;width:280px;margin:10px auto">
-        <div class="writeRef" id="wRef" style="position:absolute;inset:0;pointer-events:none;color:#d8dce6"></div>
-        <canvas id="wCan" width="280" height="280" style="position:relative;background:transparent;border:2px dashed #3a4478;border-radius:12px"></canvas>
+        <div class="writeRef" id="wRef" style="position:absolute;inset:0;pointer-events:none;color:#e9dfe2"></div>
+        <canvas id="wCan" width="280" height="280" style="position:relative;background:transparent;border:2px dashed #e6c3cb;border-radius:12px"></canvas>
       </div>
       <p class="center" id="wInfo" style="margin-top:6px"></p>
       <div class="btnrow">
@@ -1808,7 +1808,7 @@ const WSET=KANJI.concat(KANJI4);
 function wShow(){
   const k=WSET[wIdx];
   document.getElementById("wRef").textContent=wTrace?k[0]:"";
-  document.getElementById("wRef").style.color="#d8dce6";
+  document.getElementById("wRef").style.color="#e9dfe2";
   document.getElementById("wInfo").innerHTML=`<b>${k[0]}</b> — ${k[3]} <span class="muted">(on: ${k[1]} / kun: ${k[2]})</span>`;
   wClear();
 }

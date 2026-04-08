@@ -3,8 +3,8 @@
   "short_name": "TaraGO",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0f1220",
-  "theme_color": "#0f1220",
+  "background_color": "#fdf8f6",
+  "theme_color": "#fdf8f6",
   "icons": [
     { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }
   ]
