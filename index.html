@@ -118,6 +118,7 @@ progress{width:100%;height:10px}
   <p>🇵🇭→🇯🇵 N5–N1</p>
   <div id="statbar"></div>
 </header>
+<div id="setCard" style="display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:50;width:min(420px,94vw)"></div>
 <nav id="nav"></nav>
 <main id="main"></main>
 <script>
@@ -1339,7 +1340,7 @@ function rank(){let r=RANKS[0][1];for(const[x,n]of RANKS)if((store.xp||0)>=x)r=n
 function statbar(){
   const goal=50,tx=store.dayKey===todayKey()?(store.todayXP||0):0;
   document.getElementById("statbar").innerHTML=
-   `<span>🔥 ${store.streak||0}</span><span>⚡ ${store.xp||0} XP</span><span>🎯 ${Math.min(tx,goal)}/${goal}</span><span>${rank()}</span>`;
+   `<span>🔥 ${store.streak||0}</span><span>⚡ ${store.xp||0} XP</span><span>🎯 ${Math.min(tx,goal)}/${goal}</span><span>${rank()}</span><span style="cursor:pointer" onclick="renderSettings()">⚙️</span>`;
 }
 /* ---- quests, badges, weakness tracking (optimal-learning gamification) ---- */
 function quests(){
@@ -1436,7 +1437,8 @@ function startLesson(uid){
   const ex=[];
   const vpool=u.vocab.length?u.vocab:VOCAB;
   const kpool=u.kanji.length?u.kanji:KANJI;
-  shuffle(vpool).slice(0,3).forEach(v=>ex.push({t:"vmcq",v}));
+  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"vmcq",v}));
+  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"vmcq_r",v}));
   shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"listen",v}));
   shuffle(kpool).slice(0,2).forEach(k=>ex.push({t:"kmcq",k}));
   if(vpool.length>=4)ex.push({t:"pairs",set:shuffle(vpool).slice(0,4)});
@@ -1467,15 +1469,33 @@ function lessonQ(){
     shuffle(opts).map(o=>`<button class="opt" onclick="lessonAns(this,\`${o}\`,\`${correct}\`)">${o}</button>`).join("");
     if(audio)setTimeout(()=>speakJa(audio),300);
   };
+  const optN=(store.diff||"hard")==="hard"?6:4;
+  const ALLV=VOCAB.concat(VOCAB4,VOCAB3,VOCAB2,VOCAB1);
+  // fillers: same-category first (confusable), then same-pool, then anywhere
+  const fillers=(v,n,key)=>{
+    const notSame=x=>x[key]!==v[key];
+    const sameCat=shuffle(ALLV.filter(x=>x[3]===v[3]&&notSame(x)));
+    const rest=shuffle(ALLV.filter(x=>x[3]!==v[3]&&notSame(x)));
+    return [...sameCat,...rest].slice(0,n);
+  };
   if(item.t==="vmcq"){
-    const d=shuffle(VOCAB.concat(VOCAB3,VOCAB2)).filter(v=>v[2]!==item.v[2]).slice(0,3).map(v=>v[2]);
+    const d=fillers(item.v,optN-1,2).map(v=>v[2]);
     mk(item.v[0],"What does this mean?",[item.v[2],...d],item.v[2]);
+  }else if(item.t==="vmcq_r"){
+    const d=fillers(item.v,optN-1,0).map(v=>jpDisp(v));
+    mk(item.v[2],"Which is the Japanese?",[jpDisp(item.v),...d],jpDisp(item.v));
   }else if(item.t==="listen"){
-    const d=shuffle(VOCAB).filter(v=>v[2]!==item.v[2]).slice(0,3).map(v=>v[2]);
-    mk("🔊","Listen — what did you hear?",[item.v[2],...d],item.v[2],item.v[0]);
+    if((store.diff||"hard")==="hard"){
+      // hard: pick what you HEARD among similar Japanese words
+      const d=fillers(item.v,optN-1,0).map(v=>jpDisp(v));
+      mk("🔊","What did you hear?",[jpDisp(item.v),...d],jpDisp(item.v),item.v[0]);
+    }else{
+      const d=fillers(item.v,optN-1,2).map(v=>v[2]);
+      mk("🔊","What did you hear?",[item.v[2],...d],item.v[2],item.v[0]);
+    }
   }else if(item.t==="kmcq"){
     const pool=KANJI.concat(KANJI4,KANJI3,KANJI2,KANJI1);
-    const d=shuffle(pool).filter(k=>k[3]!==item.k[3]).slice(0,3).map(k=>k[3]);
+    const d=shuffle(pool).filter(k=>k[3]!==item.k[3]).slice(0,optN-1).map(k=>k[3]);
     mk(item.k[0],"What does this kanji mean?",[item.k[3],...d],item.k[3]);
   }else if(item.t==="pairs"){
     lessonPairs(item);
@@ -1531,9 +1551,10 @@ function lessonOrder(item){
   const el=document.getElementById("p-learn");
   const words=item.g[3].split("—")[0].trim().replace(/[.,!?]/g,"").split(/\s+/);
   L.orderTarget=words.join(" ");L.orderPicked=[];
+  const hardO=(store.diff||"hard")==="hard";
   el.innerHTML=lessonBar()+`<div class="card">
     <p class="center muted">Arrange the romaji to match what you hear</p>
-    <p class="mid">${item.g[2]}</p>
+    ${hardO?'<p class="center big">🔊</p>':`<p class="mid">${item.g[2]}</p>`}
     <div class="btnrow"><button class="b" onclick="speakJa('${item.g[2].replace(/'/g,"")}')">🔊</button></div>
     <div class="answerLine" id="ansLine"></div>
     <div class="bank" id="bank">${shuffle(words).map((w,i)=>`<button id="bw${i}" onclick="orderPick(this,'${w.replace(/'/g,"\\'")}')">${w}</button>`).join("")}</div>
@@ -1829,12 +1850,64 @@ function renderSpeak(){
   <p class="notice">Shadow rhythm and pitch, 5× each.</p>`;
 }
 renderSpeak();
-function speakJa(text,rate=1){
+const GOOD_VOICES=["Nanami","Keita","Kyoko","Otoya","O-Ren","Google 日本語","Hattori","Ichiro","Sayaka"];
+function jaVoices(){return (speechSynthesis.getVoices()||[]).filter(v=>v.lang&&v.lang.startsWith("ja"))}
+function bestVoice(){
+  const vs=jaVoices();if(!vs.length)return null;
+  if(store.voiceName){const m=vs.find(v=>v.name===store.voiceName);if(m)return m}
+  for(const g of GOOD_VOICES){const m=vs.find(v=>v.name.includes(g));if(m)return m}
+  return vs.find(v=>/natural|neural|online/i.test(v.name))||vs[0];
+}
+function speakJa(text,rate){
   try{
-    const u=new SpeechSynthesisUtterance(text);u.lang="ja-JP";u.rate=rate;
-    const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith("ja"));if(v)u.voice=v;
+    const u=new SpeechSynthesisUtterance(text);u.lang="ja-JP";
+    u.rate=(rate||store.rate||0.92)*(0.97+Math.random()*0.06); // slight human variation
+    u.pitch=0.98+Math.random()*0.06;
+    const v=bestVoice();if(v)u.voice=v;
     speechSynthesis.cancel();speechSynthesis.speak(u);
   }catch(e){}
+}
+/* ---- kana → romaji ---- */
+const ROMA={きゃ:"kya",きゅ:"kyu",きょ:"kyo",しゃ:"sha",しゅ:"shu",しょ:"sho",ちゃ:"cha",ちゅ:"chu",ちょ:"cho",にゃ:"nya",にゅ:"nyu",にょ:"nyo",ひゃ:"hya",ひゅ:"hyu",ひょ:"hyo",みゃ:"mya",みゅ:"myu",みょ:"myo",りゃ:"rya",りゅ:"ryu",りょ:"ryo",ぎゃ:"gya",ぎゅ:"gyu",ぎょ:"gyo",じゃ:"ja",じゅ:"ju",じょ:"jo",びゃ:"bya",びゅ:"byu",びょ:"byo",ぴゃ:"pya",ぴゅ:"pyu",ぴょ:"pyo",
+あ:"a",い:"i",う:"u",え:"e",お:"o",か:"ka",き:"ki",く:"ku",け:"ke",こ:"ko",さ:"sa",し:"shi",す:"su",せ:"se",そ:"so",た:"ta",ち:"chi",つ:"tsu",て:"te",と:"to",な:"na",に:"ni",ぬ:"nu",ね:"ne",の:"no",は:"ha",ひ:"hi",ふ:"fu",へ:"he",ほ:"ho",ま:"ma",み:"mi",む:"mu",め:"me",も:"mo",や:"ya",ゆ:"yu",よ:"yo",ら:"ra",り:"ri",る:"ru",れ:"re",ろ:"ro",わ:"wa",を:"o",ん:"n",が:"ga",ぎ:"gi",ぐ:"gu",げ:"ge",ご:"go",ざ:"za",じ:"ji",ず:"zu",ぜ:"ze",ぞ:"zo",だ:"da",ぢ:"ji",づ:"zu",で:"de",ど:"do",ば:"ba",び:"bi",ぶ:"bu",べ:"be",ぼ:"bo",ぱ:"pa",ぴ:"pi",ぷ:"pu",ぺ:"pe",ぽ:"po",ー:"-",ぁ:"a",ぃ:"i",ぅ:"u",ぇ:"e",ぉ:"o"};
+function kana2roma(s){
+  // katakana→hiragana first
+  s=(s||"").replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+  let out="",i=0;
+  while(i<s.length){
+    if(s[i]==="っ"){const nxt=ROMA[s.substr(i+1,2)]||ROMA[s[i+1]]||"";out+=nxt.charAt(0);i++;continue}
+    const two=ROMA[s.substr(i,2)];
+    if(two){out+=two;i+=2;continue}
+    out+=ROMA[s[i]]||s[i];i++;
+  }
+  return out.replace(/-/g,"");
+}
+function jpDisp(v){ // v = vocab row; render per script setting
+  const mode=store.script||"jp";
+  if(mode==="romaji")return kana2roma(v[1]);
+  if(mode==="both")return v[0]+" ("+kana2roma(v[1])+")";
+  return v[0];
+}
+/* ---- settings ---- */
+function renderSettings(){
+  const vs=jaVoices();
+  const card=document.getElementById("setCard");
+  card.innerHTML=`<div class="card" style="animation:popIn .25s var(--spring)">
+   <b>⚙️ Settings</b>
+   <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Choices script</span><div class="btnrow" style="justify-content:flex-start">
+     ${[["jp","日本語"],["romaji","Romaji"],["both","Both"]].map(([v,l])=>`<button class="pill ${(store.script||"jp")===v?"active":""}" onclick="store.script='${v}';saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
+   <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Difficulty</span><div class="btnrow" style="justify-content:flex-start">
+     ${[["normal","Normal (4 choices)"],["hard","Hard (6 + tricky fillers)"]].map(([v,l])=>`<button class="pill ${(store.diff||"hard")===v?"active":""}" onclick="store.diff='${v}';saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
+   <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Voice (${vs.length} Japanese found)</span>
+     <select onchange="store.voiceName=this.value;saveStore();speakJa('こんにちは、頑張りましょう!')" style="width:100%;padding:8px;border-radius:10px;border:1px solid #e6c3cb;background:var(--card2);color:var(--txt)">
+       ${vs.map(v=>`<option ${store.voiceName===v.name?"selected":""}>${v.name}</option>`).join("")||"<option>No ja-JP voice installed</option>"}
+     </select>
+     <p class="muted" style="font-size:.75rem;margin-top:4px">For a natural voice: iPhone → Settings → Accessibility → Spoken Content → Voices → Japanese → download <b>Kyoko/Otoya (Enhanced)</b>. Desktop Edge/Chrome include Natural voices.</p></div>
+   <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Speed</span><div class="btnrow" style="justify-content:flex-start">
+     ${[[0.75,"🐢"],[0.92,"Normal"],[1.05,"Fast"]].map(([v,l])=>`<button class="pill ${(store.rate||0.92)===v?"active":""}" onclick="store.rate=${v};saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
+   <div class="btnrow"><button class="b" onclick="speakJa('日本語の勉強を続けましょう。')">🔊 Test voice</button><button class="b" onclick="document.getElementById('setCard').style.display='none'">Close</button></div>
+  </div>`;
+  card.style.display="block";
 }
 function recSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
