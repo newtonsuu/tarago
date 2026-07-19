@@ -1493,19 +1493,25 @@ function renderPath(){
     <progress value="${Math.min(q.cur,q.max)}" max="${q.max}" style="width:90px"></progress>
     <span class="muted" style="font-size:.78rem">+${q.xp}</span></div>`).join("")}</div>
   <div class="card" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">${BADGES.map(([id,name])=>`<span class="pill" style="${(store.badges||{})[id]?"":"opacity:.3"}">${name}</span>`).join("")}</div>`;
+  // find current level = first level not 100% complete
+  const lvPcts={};LEVELS.forEach(lv=>lvPcts[lv.id]=lvlPct(lv.id));
+  const curLvl=(LEVELS.find(lv=>lvPcts[lv.id]<100)||LEVELS[0]).id;
+  let firstOpenId=null;
   LEVELS.forEach(lv=>{
     const units=ALL_UNITS.filter(u=>u.lvl===lv.id);
-    const done=units.reduce((a,u)=>a+Math.min(uProg(u.id),LESSONS_PER_UNIT),0);
-    const pct=Math.round(100*done/(units.length*LESSONS_PER_UNIT));
-    html+=`<div class="lvlHead"><h2>${lv.name}</h2><div class="bar"><i style="width:${pct}%"></i></div><span class="muted" style="font-size:.8rem">${pct}%</span></div>
-    <p class="muted" style="font-size:.82rem;margin-bottom:8px">${lv.goal}</p><div class="path">`;
+    const pct=lvPcts[lv.id];
+    const expanded=openLvls[lv.id]!==undefined?openLvls[lv.id]:lv.id===curLvl;
+    html+=`<div class="lvlHead" style="cursor:pointer" onclick="toggleLvl('${lv.id}')"><h2>${expanded?"▾":"▸"} ${lv.name}</h2><div class="bar"><i style="width:${pct}%"></i></div><span class="muted" style="font-size:.8rem">${pct}%</span></div>`;
+    if(!expanded){html+=`<p class="muted" style="font-size:.78rem;margin-bottom:4px">${pct>=100?"👑 Complete — tap to revisit":pct>0?"In progress — tap to open":"🔒 Tap to preview"}</p>`;return}
+    html+=`<p class="muted" style="font-size:.82rem;margin-bottom:8px">${lv.goal}</p><div class="path">`;
     units.forEach((u,i)=>{
       const p=uProg(u.id);
       const prevDone=i===0?true:uProg(units[i-1].id)>=1;
-      const globalFirst=lv.id==="N5"||ALL_UNITS.filter(x=>x.lvl===lv.id)[0]!==u||true;
       const state=p>=LESSONS_PER_UNIT?"done":prevDone?"open":"lock";
+      const isCur=!firstOpenId&&state==="open"&&lv.id===curLvl;
+      if(isCur)firstOpenId=u.id;
       const ring=state==="open"?`<div class="ring" style="background:conic-gradient(var(--acc2) ${p/LESSONS_PER_UNIT*360}deg,transparent 0);mask:radial-gradient(closest-side,transparent 84%,black 85%);-webkit-mask:radial-gradient(closest-side,transparent 84%,black 85%)"></div>`:"";
-      html+=`<div class="nodeWrap"><button class="node ${state}" title="${unitTheme(lv.id,i)}" ${state!=="lock"?`onclick="startLesson('${u.id}')"`:""}>
+      html+=`<div class="nodeWrap" ${isCur?'id="curNode"':""}><button class="node ${state}" title="${unitTheme(lv.id,i)}" ${state!=="lock"?`onclick="startLesson('${u.id}')"`:""}>
         ${ring}<span class="ico">${state==="done"?"👑":state==="lock"?"🔒":UNIT_ICONS[i%UNIT_ICONS.length]}</span>
         <span>Unit ${i+1}</span></button>
         <span class="uTheme">${unitTheme(lv.id,i)}</span></div>`;
@@ -1514,6 +1520,15 @@ function renderPath(){
   });
   html+=`<p class="notice">Unit = 8 kanji · 12 vocab · 4 grammar. New waves ship regularly.</p>`;
   el.innerHTML=html;statbar();
+  // auto-scroll to the unit you should do next — no hunting
+  const cn=document.getElementById("curNode");
+  if(cn)setTimeout(()=>cn.scrollIntoView({behavior:"smooth",block:"center"}),150);
+}
+let openLvls={};
+function toggleLvl(id){
+  const cur=(LEVELS.find(lv=>lvlPct(lv.id)<100)||LEVELS[0]).id;
+  const now=openLvls[id]!==undefined?openLvls[id]:id===cur;
+  openLvls[id]=!now;renderPath();
 }
 /* ---- lesson engine ---- */
 let L={};
