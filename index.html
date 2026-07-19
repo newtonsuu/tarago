@@ -9,13 +9,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#fdf8f6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Kaisei+Decol:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fdf8f6;--card:#ffffff;--card2:#fbeef0;--acc:#e35d75;--acc2:#2ea8b5;--gold:#c9950c;--txt:#2b2330;--mut:#8a7f8d;--ok:#3aa06a;--spring:cubic-bezier(.34,1.56,.64,1);}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;
-  background:radial-gradient(1100px 500px at 85% -10%, #fde3ea 0%, transparent 60%),
-             radial-gradient(900px 500px at -10% 30%, #e3f2f4 0%, transparent 55%),
-             var(--bg);background-attachment:fixed}
+body{font-family:'Zen Maru Gothic','Noto Sans JP','Segoe UI',system-ui,sans-serif;color:var(--txt);min-height:100vh;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cg fill='none' stroke='%23e9c8d0' stroke-opacity='.35'%3E%3Cpath d='M0 40a40 40 0 0 1 80 0M-40 40a40 40 0 0 1 80 0M40 40a40 40 0 0 1 80 0M0 40a20 20 0 0 1 40 0M-20 40a20 20 0 0 1 40 0M40 40a20 20 0 0 1 40 0M60 40a20 20 0 0 1 40 0'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(1100px 500px at 85% -10%, #fde3ea 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, #e3f2f4 0%, transparent 55%),
+    var(--bg);background-attachment:fixed}
+h1,h2,h3,.lvlHead h2{font-family:'Kaisei Decol','Zen Maru Gothic',serif}
+.jp,.big,.mid,.kanaCell .k,.writeRef,.ex{font-family:'Noto Sans JP','Yu Gothic','Meiryo','Hiragino Sans',sans-serif}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#c93a4c;color:#fff;border-radius:8px;font-family:'Noto Sans JP',serif;font-weight:700;font-size:1.15rem;transform:rotate(-4deg);box-shadow:2px 2px 0 #00000018;vertical-align:middle;margin-right:6px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes popIn{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #2ea8b533}50%{box-shadow:0 0 0 12px #2ea8b500}}
@@ -114,7 +122,7 @@ progress{width:100%;height:10px}
 </head>
 <body>
 <header>
-  <h1>Tara<span>GO</span> — JLPT N5 Reviewer</h1>
+  <h1><span class="seal">語</span>Tara<span>GO</span></h1>
   <p>🇵🇭→🇯🇵 N5–N1</p>
   <div id="statbar"></div>
 </header>
@@ -1333,6 +1341,7 @@ function addXP(n){
     store.lastDay=t;
   }
   store.todayXP=(store.dayKey===t?(store.todayXP||0):0)+n;store.dayKey=t;
+  store.hist=store.hist||{};store.hist[t]=(store.hist[t]||0)+n;
   saveStore();statbar();
 }
 const RANKS=[[0,"🌱 Beginner"],[150,"📖 Student"],[400,"🎒 Kouhai"],[900,"🌸 Senpai"],[1800,"🏅 Sensei"],[3200,"⛩️ Master"],[5500,"🐉 Legend"]];
@@ -1440,6 +1449,29 @@ function placementResult(){
     <p><b>You start at ${start}.</b> ${skip.length?skip.join("+")+" marked complete — Smart Review keeps them fresh.":"We build from the foundations."}</p>
     <div class="btnrow"><button class="b good" onclick="renderPath()">To my path →</button></div></div>`;
 }
+function xpGraph(){
+  const days=[...Array(14)].map((_,i)=>{
+    const d=new Date(Date.now()-(13-i)*864e5);
+    const k=d.toISOString().slice(0,10);
+    return {k,label:"月火水木金土日"[ (d.getDay()+6)%7 ],xp:(store.hist||{})[k]||0};
+  });
+  const max=Math.max(50,...days.map(d=>d.xp));
+  const W=320,H=90,bw=W/14;
+  const bars=days.map((d,i)=>{
+    const h=Math.round(d.xp/max*(H-24));
+    const today=i===13;
+    return `<rect x="${(i*bw+3).toFixed(1)}" y="${H-16-h}" width="${(bw-6).toFixed(1)}" height="${Math.max(h,2)}" rx="4" fill="${today?"var(--acc)":d.xp>0?"var(--acc2)":"#eddfe3"}"><title>${d.k}: ${d.xp} XP</title></rect>
+      <text x="${(i*bw+bw/2).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="8" fill="var(--mut)">${d.label}</text>`;
+  }).join("");
+  const goalY=H-16-Math.round(50/max*(H-24));
+  const week=days.slice(7).reduce((a,d)=>a+d.xp,0);
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline">
+    <b>📈 上達 Progress</b><span class="muted" style="font-size:.8rem">${week} XP this week</span></div>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;margin-top:6px">
+      <line x1="0" y1="${goalY}" x2="${W}" y2="${goalY}" stroke="var(--gold)" stroke-dasharray="4 4" stroke-width="1"/>
+      <text x="2" y="${goalY-3}" font-size="8" fill="var(--gold)">daily goal</text>
+      ${bars}</svg></div>`;
+}
 function renderPath(){
   const el=document.getElementById("p-learn");
   if(!store.placed){
@@ -1453,7 +1485,7 @@ function renderPath(){
     statbar();return;
   }
   const dueW=Object.values(store.weak||{}).filter(c=>c>0).length;
-  let html=`<div class="card" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+  let html=xpGraph()+`<div class="card" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
     <div><b>🎯 Smart Review</b><div class="muted" style="font-size:.8rem">${dueW?dueW+" weak items waiting":"Mixed retrieval practice"}</div></div>
     <button class="b good" onclick="smartReview()">Start</button></div>
   <div class="card">${quests().map(q=>`<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
