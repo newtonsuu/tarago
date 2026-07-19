@@ -1396,8 +1396,62 @@ function smartReview(){
   L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,combo:0};
   lessonQ();
 }
+/* ---- placement test (first-time assessment) ---- */
+let PL={};
+function placementStart(){
+  const qs=[];
+  const mkq=(pool,lvl,n)=>shuffle(pool).slice(0,n).forEach(v=>{
+    const d=shuffle(pool.filter(x=>x[2]!==v[2])).slice(0,3).map(x=>x[2]);
+    qs.push({lvl,prompt:v[0],opts:shuffle([v[2],...d]),a:v[2]});
+  });
+  mkq(VOCAB,"N5",4);mkq(KANJI.map(k=>[k[0],k[1],k[3],"k"]),"N5",2);
+  mkq(VOCAB4,"N4",4);mkq(KANJI4.map(k=>[k[0],k[1],k[3],"k"]),"N4",2);
+  mkq(VOCAB3,"N3",3);
+  PL={qs,i:0,score:{}};placementQ();
+}
+function placementQ(){
+  const el=document.getElementById("p-learn");
+  if(PL.i>=PL.qs.length){placementResult();return}
+  const q=PL.qs[PL.i];
+  el.innerHTML=`<div class="stat">Placement ${PL.i+1}/${PL.qs.length}</div>
+  <div class="card"><p class="center muted">What does this mean?</p><div class="big">${q.prompt}</div></div>
+  ${q.opts.map(o=>`<button class="opt" onclick="placementAns(this,\`${o}\`)">${o}</button>`).join("")}
+  <div class="btnrow"><button class="b" onclick="placementAns(null,null)">I don't know</button></div>`;
+}
+function placementAns(btn,val){
+  const q=PL.qs[PL.i];
+  PL.score[q.lvl]=PL.score[q.lvl]||{ok:0,n:0};PL.score[q.lvl].n++;
+  if(val===q.a)PL.score[q.lvl].ok++;
+  PL.i++;placementQ();
+}
+function placementResult(){
+  const pct=l=>PL.score[l]?Math.round(100*PL.score[l].ok/PL.score[l].n):0;
+  let start="N5",skip=[];
+  if(pct("N5")>=70){start="N4";skip=["N5"]}
+  if(pct("N5")>=70&&pct("N4")>=70){start="N3";skip=["N5","N4"]}
+  if(skip.length){
+    store.units=store.units||{};
+    ALL_UNITS.filter(u=>skip.includes(u.lvl)).forEach(u=>store.units[u.id]=LESSONS_PER_UNIT);
+  }
+  store.placed=start;saveStore();confetti();
+  document.getElementById("p-learn").innerHTML=`<div class="card center">
+    <h3 style="color:var(--acc2)">Placement done!</h3>
+    <p style="margin:8px 0">N5: ${pct("N5")}% · N4: ${pct("N4")}% · N3: ${pct("N3")}%</p>
+    <p><b>You start at ${start}.</b> ${skip.length?skip.join("+")+" marked complete — Smart Review keeps them fresh.":"We build from the foundations."}</p>
+    <div class="btnrow"><button class="b good" onclick="renderPath()">To my path →</button></div></div>`;
+}
 function renderPath(){
   const el=document.getElementById("p-learn");
+  if(!store.placed){
+    el.innerHTML=`<div class="card center" style="border:2px solid var(--acc2)">
+      <h3>👋 Kumusta! Welcome to TaraGO</h3>
+      <p class="muted" style="margin:10px 0">Two ways to begin:</p>
+      <div class="btnrow">
+        <button class="b good" onclick="placementStart()">📊 Placement test (~3 min)</button>
+        <button class="b" onclick="store.placed='N5';saveStore();renderPath()">Start from zero (N5)</button>
+      </div></div>`;
+    statbar();return;
+  }
   const dueW=Object.values(store.weak||{}).filter(c=>c>0).length;
   let html=`<div class="card" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
     <div><b>🎯 Smart Review</b><div class="muted" style="font-size:.8rem">${dueW?dueW+" weak items waiting":"Mixed retrieval practice"}</div></div>
@@ -1434,21 +1488,54 @@ let L={};
 function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
 function startLesson(uid){
   const u=ALL_UNITS.find(x=>x.id===uid);
-  const ex=[];
   const vpool=u.vocab.length?u.vocab:VOCAB;
   const kpool=u.kanji.length?u.kanji:KANJI;
-  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"vmcq",v}));
-  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"vmcq_r",v}));
-  shuffle(vpool).slice(0,2).forEach(v=>ex.push({t:"listen",v}));
-  shuffle(kpool).slice(0,2).forEach(k=>ex.push({t:"kmcq",k}));
-  if(vpool.length>=4)ex.push({t:"pairs",set:shuffle(vpool).slice(0,4)});
-  shuffle(u.gram.length?u.gram:GRAMMAR).slice(0,2).forEach(g=>ex.push({t:"order",g}));
-  L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,inRetry:false,combo:0};
-  // end on an easy one (research: end on success)
-  L.ex.push({t:"vmcq",v:shuffle(vpool)[0],easy:true});
+  const firstTime=uProg(u.id)===0;
+  // pick this lesson's items once, so teach cards match the exercises
+  const vs=shuffle(vpool).slice(0,firstTime?4:6);
+  const ks=shuffle(kpool).slice(0,2);
+  const gs=shuffle(u.gram.length?u.gram:GRAMMAR).slice(0,firstTime?1:2);
+  const ex=[];
+  // LEARNING STAGE: new material is presented before it is ever tested
+  if(firstTime){
+    vs.forEach(v=>ex.push({t:"teach",v}));
+    ks.forEach(k=>ex.push({t:"teach",k}));
+    gs.forEach(g=>ex.push({t:"teach",g}));
+  }
+  vs.slice(0,2).forEach(v=>ex.push({t:"vmcq",v}));
+  vs.slice(2,4).forEach(v=>ex.push({t:"vmcq_r",v}));
+  vs.slice(0,2).forEach(v=>ex.push({t:"listen",v}));
+  ks.forEach(k=>ex.push({t:"kmcq",k}));
+  if(vs.length>=4)ex.push({t:"pairs",set:vs.slice(0,4)});
+  gs.forEach(g=>ex.push({t:"order",g}));
+  // teach cards stay in order at the front; exercises shuffle after them
+  const teach=ex.filter(e=>e.t==="teach"),drill=shuffle(ex.filter(e=>e.t!=="teach"));
+  L={u,ex:[...teach,...drill],i:0,wrong:[],xp:0,inRetry:false,combo:0};
+  L.ex.push({t:"vmcq",v:vs[0]||shuffle(vpool)[0],easy:true}); // end on success
   lessonQ();
 }
+function teachCard(item){
+  const el=document.getElementById("p-learn");
+  let body,audio;
+  if(item.v){audio=item.v[0];body=`<div class="big">${item.v[0]}</div><p class="center muted">${item.v[1]} · ${kana2roma(item.v[1])}</p><div class="mid" style="margin-top:8px">${item.v[2]}</div>`}
+  else if(item.k){audio=item.k[0];body=`<div class="big">${item.k[0]}</div><div class="mid">${item.k[3]}</div><p class="center muted">on: ${item.k[1]} · kun: ${item.k[2]}</p>`}
+  else{audio=item.g[2];body=`<h3 style="color:var(--acc2);text-align:center">${item.g[0]}</h3><p class="center" style="margin:6px 0">${item.g[1]}</p><p class="mid">${item.g[2]}</p><p class="center muted">${item.g[3]}</p>`}
+  el.innerHTML=lessonBar()+`<div class="card" style="border:2px solid var(--gold)">
+    <p class="center" style="color:var(--gold);font-weight:600;margin-bottom:8px">✨ NEW</p>${body}
+    <div class="btnrow"><button class="b" onclick="speakJa('${audio.replace(/'/g,"")}')">🔊</button>
+    <button class="b good" onclick="L.i++;lessonQ()">Got it →</button></div></div>`;
+  setTimeout(()=>speakJa(audio),300);
+}
 function itemKey2(it){return it.v?it.v[0]:it.k?it.k[0]:null}
+// difficulty tier: 0=first lesson (learn), 1=second, 2+=third+ (hard)
+function diffTier(){
+  const d=store.diff||"auto";
+  if(d==="normal")return 1;
+  if(d==="hard")return 2;
+  return L.u?Math.min(uProg(L.u.id),2):1; // auto: scales with unit progress
+}
+function optCount(){return [4,5,6][diffTier()]}
+function isHard(){return diffTier()>=2}
 function lessonBar(){
   const total=L.ex.length+L.wrong.length;
   return `<div class="lessonTop"><button class="pill" onclick="renderPath()">✕</button>
@@ -1469,7 +1556,8 @@ function lessonQ(){
     shuffle(opts).map(o=>`<button class="opt" onclick="lessonAns(this,\`${o}\`,\`${correct}\`)">${o}</button>`).join("");
     if(audio)setTimeout(()=>speakJa(audio),300);
   };
-  const optN=(store.diff||"hard")==="hard"?6:4;
+  if(item.t==="teach"){teachCard(item);return}
+  const optN=optCount();
   const ALLV=VOCAB.concat(VOCAB4,VOCAB3,VOCAB2,VOCAB1);
   // fillers: same-category first (confusable), then same-pool, then anywhere
   const fillers=(v,n,key)=>{
@@ -1485,7 +1573,7 @@ function lessonQ(){
     const d=fillers(item.v,optN-1,0).map(v=>jpDisp(v));
     mk(item.v[2],"Which is the Japanese?",[jpDisp(item.v),...d],jpDisp(item.v));
   }else if(item.t==="listen"){
-    if((store.diff||"hard")==="hard"){
+    if(isHard()){
       // hard: pick what you HEARD among similar Japanese words
       const d=fillers(item.v,optN-1,0).map(v=>jpDisp(v));
       mk("🔊","What did you hear?",[jpDisp(item.v),...d],jpDisp(item.v),item.v[0]);
@@ -1551,7 +1639,7 @@ function lessonOrder(item){
   const el=document.getElementById("p-learn");
   const words=item.g[3].split("—")[0].trim().replace(/[.,!?]/g,"").split(/\s+/);
   L.orderTarget=words.join(" ");L.orderPicked=[];
-  const hardO=(store.diff||"hard")==="hard";
+  const hardO=isHard();
   el.innerHTML=lessonBar()+`<div class="card">
     <p class="center muted">Arrange the romaji to match what you hear</p>
     ${hardO?'<p class="center big">🔊</p>':`<p class="mid">${item.g[2]}</p>`}
@@ -1897,7 +1985,7 @@ function renderSettings(){
    <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Choices script</span><div class="btnrow" style="justify-content:flex-start">
      ${[["jp","日本語"],["romaji","Romaji"],["both","Both"]].map(([v,l])=>`<button class="pill ${(store.script||"jp")===v?"active":""}" onclick="store.script='${v}';saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
    <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Difficulty</span><div class="btnrow" style="justify-content:flex-start">
-     ${[["normal","Normal (4 choices)"],["hard","Hard (6 + tricky fillers)"]].map(([v,l])=>`<button class="pill ${(store.diff||"hard")===v?"active":""}" onclick="store.diff='${v}';saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
+     ${[["auto","Auto (gets harder as you progress)"],["normal","Normal"],["hard","Hard"]].map(([v,l])=>`<button class="pill ${(store.diff||"auto")===v?"active":""}" onclick="store.diff='${v}';saveStore();renderSettings()">${l}</button>`).join("")}</div></div>
    <div style="margin:10px 0"><span class="muted" style="font-size:.85rem">Voice (${vs.length} Japanese found)</span>
      <select onchange="store.voiceName=this.value;saveStore();speakJa('こんにちは、頑張りましょう!')" style="width:100%;padding:8px;border-radius:10px;border:1px solid #e6c3cb;background:var(--card2);color:var(--txt)">
        ${vs.map(v=>`<option ${store.voiceName===v.name?"selected":""}>${v.name}</option>`).join("")||"<option>No ja-JP voice installed</option>"}
