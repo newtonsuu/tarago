@@ -1276,6 +1276,9 @@ function grade(t,i,ok){
   s.iv=ok?(s.iv===0?1:Math.round(s.iv*2.3)):0;
   const mins=s.iv===0?1:s.iv*1440;
   s.due=Date.now()+mins*60000;store[k]=s;saveStore();
+  if(typeof questBump==="function")questBump("reviews");
+  const p=t==="kanji"?KANJI:t==="kanji4"?KANJI4:VOCAB;
+  if(p[i]){ok?clearWeak(p[i][0]):markWeak(p[i][0])}
 }
 
 /* ================= UI SHELL ================= */
@@ -1331,14 +1334,78 @@ function addXP(n){
   store.todayXP=(store.dayKey===t?(store.todayXP||0):0)+n;store.dayKey=t;
   saveStore();statbar();
 }
+const RANKS=[[0,"🌱 Beginner"],[150,"📖 Student"],[400,"🎒 Kouhai"],[900,"🌸 Senpai"],[1800,"🏅 Sensei"],[3200,"⛩️ Master"],[5500,"🐉 Legend"]];
+function rank(){let r=RANKS[0][1];for(const[x,n]of RANKS)if((store.xp||0)>=x)r=n;return r}
 function statbar(){
   const goal=50,tx=store.dayKey===todayKey()?(store.todayXP||0):0;
   document.getElementById("statbar").innerHTML=
-   `<span>🔥 ${store.streak||0} day streak</span><span>⚡ ${store.xp||0} XP</span><span>🎯 ${Math.min(tx,goal)}/${goal} today</span>`;
+   `<span>🔥 ${store.streak||0}</span><span>⚡ ${store.xp||0} XP</span><span>🎯 ${Math.min(tx,goal)}/${goal}</span><span>${rank()}</span>`;
+}
+/* ---- quests, badges, weakness tracking (optimal-learning gamification) ---- */
+function quests(){
+  const t=todayKey();
+  if(store.qDay!==t){store.qDay=t;store.q={lessons:0,reviews:0,listens:0};saveStore()}
+  return [
+    {id:"lessons",name:"Complete 2 lessons",cur:store.q.lessons,max:2,xp:30},
+    {id:"reviews",name:"Review 10 flashcards",cur:store.q.reviews,max:10,xp:20},
+    {id:"listens",name:"Get 5 listening items right",cur:store.q.listens,max:5,xp:20}];
+}
+function questBump(id,n=1){
+  quests();store.q[id]=(store.q[id]||0)+n;
+  const q=quests().find(x=>x.id===id);
+  if(q&&store.q[id]===q.max){addXP(q.xp);toast(`Quest done! +${q.xp} XP`)}
+  saveStore();
+}
+const BADGES=[
+ ["first","🎌 First lesson",()=>totalLessons()>=1],
+ ["ten","🍙 10 lessons",()=>totalLessons()>=10],
+ ["streak7","🔥 7-day streak",()=>(store.streak||0)>=7],
+ ["crown","👑 First unit mastered",()=>Object.values(store.units||{}).some(v=>v>=LESSONS_PER_UNIT)],
+ ["n5half","🗻 Half of N5",()=>lvlPct("N5")>=50],
+ ["n5done","⛩️ N5 complete",()=>lvlPct("N5")>=100],
+ ["xp1k","⚡ 1,000 XP",()=>(store.xp||0)>=1000],
+ ["mock","📝 Mock exam 80%+",()=>store.mockPass]];
+function totalLessons(){return Object.values(store.units||{}).reduce((a,b)=>a+b,0)}
+function lvlPct(id){const us=ALL_UNITS.filter(u=>u.lvl===id);return Math.round(100*us.reduce((a,u)=>a+Math.min(uProg(u.id),LESSONS_PER_UNIT),0)/(us.length*LESSONS_PER_UNIT))}
+function checkBadges(){
+  store.badges=store.badges||{};
+  BADGES.forEach(([id,name,fn])=>{if(!store.badges[id]&&fn()){store.badges[id]=1;toast("Badge earned: "+name)}});
+  saveStore();
+}
+function toast(msg){
+  const t=document.createElement("div");
+  t.textContent=msg;
+  t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--txt);color:var(--bg);padding:10px 18px;border-radius:12px;z-index:99;animation:popIn .3s var(--spring)";
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+function markWeak(key){store.weak=store.weak||{};store.weak[key]=(store.weak[key]||0)+1;saveStore()}
+function clearWeak(key){if(store.weak&&store.weak[key]>0)store.weak[key]--}
+function smartReview(){
+  // optimal learning: retrieve weakest + due items first
+  const weak=Object.entries(store.weak||{}).filter(([,c])=>c>0).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k])=>k);
+  const vs=weak.map(k=>VOCAB.concat(VOCAB4,VOCAB3,VOCAB2,VOCAB1).find(v=>v[0]===k)).filter(Boolean);
+  const ks=weak.map(k=>KANJI.concat(KANJI4,KANJI3,KANJI2,KANJI1).find(x=>x[0]===k)).filter(Boolean);
+  const u={id:"review",lvl:"Smart",idx:0,kanji:ks.length?ks:shuffle(KANJI).slice(0,4),vocab:vs.length?vs:shuffle(VOCAB).slice(0,8),gram:shuffle(GRAMMAR).slice(0,2)};
+  const ex=[];
+  u.vocab.slice(0,4).forEach(v=>ex.push({t:"vmcq",v}));
+  u.vocab.slice(0,2).forEach(v=>ex.push({t:"listen",v}));
+  u.kanji.slice(0,3).forEach(k=>ex.push({t:"kmcq",k}));
+  if(u.vocab.length>=4)ex.push({t:"pairs",set:u.vocab.slice(0,4)});
+  u.gram.forEach(g=>ex.push({t:"order",g}));
+  L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,combo:0};
+  lessonQ();
 }
 function renderPath(){
   const el=document.getElementById("p-learn");
-  let html="";
+  const dueW=Object.values(store.weak||{}).filter(c=>c>0).length;
+  let html=`<div class="card" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+    <div><b>🎯 Smart Review</b><div class="muted" style="font-size:.8rem">${dueW?dueW+" weak items waiting":"Mixed retrieval practice"}</div></div>
+    <button class="b good" onclick="smartReview()">Start</button></div>
+  <div class="card">${quests().map(q=>`<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
+    <span style="flex:1;font-size:.88rem">${q.cur>=q.max?"✅":"⬜"} ${q.name}</span>
+    <progress value="${Math.min(q.cur,q.max)}" max="${q.max}" style="width:90px"></progress>
+    <span class="muted" style="font-size:.78rem">+${q.xp}</span></div>`).join("")}</div>
+  <div class="card" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">${BADGES.map(([id,name])=>`<span class="pill" style="${(store.badges||{})[id]?"":"opacity:.3"}">${name}</span>`).join("")}</div>`;
   LEVELS.forEach(lv=>{
     const units=ALL_UNITS.filter(u=>u.lvl===lv.id);
     const done=units.reduce((a,u)=>a+Math.min(uProg(u.id),LESSONS_PER_UNIT),0);
@@ -1374,15 +1441,16 @@ function startLesson(uid){
   shuffle(kpool).slice(0,2).forEach(k=>ex.push({t:"kmcq",k}));
   if(vpool.length>=4)ex.push({t:"pairs",set:shuffle(vpool).slice(0,4)});
   shuffle(u.gram.length?u.gram:GRAMMAR).slice(0,2).forEach(g=>ex.push({t:"order",g}));
-  L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,inRetry:false};
+  L={u,ex:shuffle(ex),i:0,wrong:[],xp:0,inRetry:false,combo:0};
   // end on an easy one (research: end on success)
   L.ex.push({t:"vmcq",v:shuffle(vpool)[0],easy:true});
   lessonQ();
 }
+function itemKey2(it){return it.v?it.v[0]:it.k?it.k[0]:null}
 function lessonBar(){
   const total=L.ex.length+L.wrong.length;
   return `<div class="lessonTop"><button class="pill" onclick="renderPath()">✕</button>
-    <div class="bar"><i style="width:${Math.round(100*L.i/total)}%"></i></div><span class="muted">⚡${L.xp}</span></div>
+    <div class="bar"><i style="width:${Math.round(100*L.i/total)}%"></i></div><span class="muted">⚡${L.xp}${L.combo>=2?" 🔥×"+L.combo:""}</span></div>
     <p class="center muted" style="font-size:.8rem;margin-bottom:8px">${L.u.lvl} · ${unitTheme(L.u.lvl,L.u.idx)}</p>`;
 }
 function lessonQ(){
@@ -1418,8 +1486,18 @@ function lessonQ(){
 function lessonAns(btn,val,correct){
   if(L.locked)return;L.locked=true;
   document.querySelectorAll(".opt").forEach(b=>{if(b.textContent===correct)b.classList.add("correct")});
-  if(val===correct){L.xp+=10;addXP(10)}
-  else{btn.classList.add("wrong");if(!L.retryItem)L.wrong.push(L.cur)}
+  const key=itemKey2(L.cur);
+  if(val===correct){
+    L.combo=(L.combo||0)+1;
+    const bonus=10+Math.min(L.combo-1,5)*2; // combo multiplier caps at +10
+    L.xp+=bonus;addXP(bonus);
+    if(key)clearWeak(key);
+    if(L.cur.t==="listen")questBump("listens");
+  }else{
+    L.combo=0;btn.classList.add("wrong");
+    if(key)markWeak(key);
+    if(!L.retryItem)L.wrong.push(L.cur);
+  }
   L.retryItem=false;
   setTimeout(()=>{L.i++;lessonQ()},1000);
 }
@@ -1473,7 +1551,7 @@ function orderPick(btn,w){
 function orderCheck(){
   const got=L.orderPicked.map(p=>p.w).join(" ");
   const ok=got.toLowerCase()===L.orderTarget.toLowerCase();
-  if(ok){L.xp+=15;addXP(15)}else if(!L.retryItem){L.wrong.push(L.cur)}
+  if(ok){L.combo=(L.combo||0)+1;L.xp+=15;addXP(15)}else{L.combo=0;if(!L.retryItem)L.wrong.push(L.cur)}
   L.retryItem=false;
   const el=document.getElementById("ansLine");
   el.style.borderColor=ok?"var(--ok)":"var(--acc)";
@@ -1492,17 +1570,20 @@ function confetti(){
 function lessonDone(){
   confetti();
   const u=L.u;
-  store.units=store.units||{};
-  store.units[u.id]=Math.min((store.units[u.id]||0)+1,LESSONS_PER_UNIT);
+  if(u.id!=="review"){
+    store.units=store.units||{};
+    store.units[u.id]=Math.min((store.units[u.id]||0)+1,LESSONS_PER_UNIT);
+  }
   L.xp+=20;addXP(20);
+  questBump("lessons");checkBadges();
   document.getElementById("p-learn").innerHTML=`
   <div class="card center">
     <div class="xpPop">⚡ +${L.xp} XP</div>
     <h3 style="color:var(--ok)">Lesson complete! すごい!</h3>
-    <p class="muted" style="margin:8px 0">Unit progress: ${store.units[u.id]}/${LESSONS_PER_UNIT} ${store.units[u.id]>=LESSONS_PER_UNIT?"— 👑 Unit mastered!":""}</p>
+    <p class="muted" style="margin:8px 0">${u.id==="review"?"Weak items retrained 💪":`Unit progress: ${(store.units||{})[u.id]||0}/${LESSONS_PER_UNIT} ${((store.units||{})[u.id]||0)>=LESSONS_PER_UNIT?"— 👑 Unit mastered!":""}`}</p>
     <div class="btnrow">
-      <button class="b good" onclick="startLesson('${u.id}')">Another lesson</button>
-      <button class="b" onclick="renderPath()">Back to path</button>
+      <button class="b good" onclick="${u.id==="review"?"smartReview()":`startLesson('${u.id}')`}">Again</button>
+      <button class="b" onclick="renderPath()">Path</button>
     </div>
   </div>`;
 }
@@ -1714,6 +1795,7 @@ function mockAns(btn,i){
 function mockResult(){
   const tot=Object.values(mScore).reduce((a,s)=>a+s.ok,0),n=Object.values(mScore).reduce((a,s)=>a+s.n,0);
   const pct=Math.round(100*tot/n);
+  if(pct>=80){store.mockPass=1;saveStore();checkBadges()}
   document.getElementById("p-mock").innerHTML=`
   <div class="card center">
     <h3 style="color:var(--acc2)">Result: ${tot}/${n} (${pct}%)</h3>
